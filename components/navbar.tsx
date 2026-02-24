@@ -80,7 +80,7 @@ export function Navbar({
 
         <div className="hidden items-center gap-3 md:flex">
           <span className="text-sm text-muted-foreground">
-            {fullName || "مستخدم"}{" "}
+            {fullName || "عضو"}{" "}
             <span className="rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
               {roleLabels[role] || role}
             </span>

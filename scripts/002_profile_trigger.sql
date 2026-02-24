@@ -37,3 +37,32 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row
   execute function public.handle_new_user();
+
+-- Prevent unauthorized role/verification updates
+create or replace function public.prevent_role_escalation()
+returns trigger
+language plpgsql
+security definer
+as $$
+begin
+  -- If the user is not an admin, they cannot change their role or verification status
+  if (
+    (old.role is distinct from new.role or old.is_verified is distinct from new.is_verified)
+    and not exists (
+      select 1 from public.profiles
+      where id = auth.uid()
+      and role = 'admin'
+    )
+  ) then
+    raise exception 'Unauthorized to modify role or verification status';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_profile_update on public.profiles;
+
+create trigger on_profile_update
+  before update on public.profiles
+  for each row
+  execute function public.prevent_role_escalation();

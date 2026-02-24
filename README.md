@@ -38,9 +38,8 @@ The entire interface is in Arabic with full right-to-left (RTL) support, making 
 - **Worker Dashboard** -- Track submitted applications, view their statuses, and monitor personal ratings.
 - **Admin Panel** -- A dedicated dashboard for platform administrators to oversee all users, companies, jobs, and applications, with the ability to verify user profiles.
 - **Profile Management** -- Users can update their personal information, including name, phone, and city.
-- **Rating System** -- A built-in rating system (1-5 stars) to build trust between workers and companies.
-- **Row Level Security (RLS)** -- All database tables are protected with Supabase RLS policies, ensuring users can only access and modify their own data.
 - **Arabic (RTL) Interface** -- Full Arabic language support with right-to-left layout and IBM Plex Sans Arabic font.
+- **Robust Security** -- Critical security measures including dual-layer RLS policies and database triggers to prevent role escalation.
 - **Responsive Design** -- Works on desktop, tablet, and mobile devices.
 
 ---
