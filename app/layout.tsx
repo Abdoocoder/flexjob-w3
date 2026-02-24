@@ -13,6 +13,13 @@ const arabicSans = IBM_Plex_Sans_Arabic({
 export const metadata: Metadata = {
   title: 'فلكس جوب - سوق العمل المرن',
   description: 'تواصل مع فرص عمل مرنة. ابحث عن وظائف مؤقتة وبدوام جزئي أو وظّف عمالاً موثوقين لنشاطك التجاري.',
+  icons: {
+    icon: [
+      { url: '/icon-light-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-icon.png',
+  },
 }
 
 export const viewport: Viewport = {
