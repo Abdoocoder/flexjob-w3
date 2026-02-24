@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Briefcase, Target, Eye, Shield, Users, Award, TrendingUp, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 export default function AboutPage() {
     return (
@@ -90,30 +91,35 @@ export default function AboutPage() {
                                 role="المؤسس والرئيس التنفيذي (CEO)"
                                 disc="نمط D"
                                 desc="تتسم بالحسم والتركيز على النتائج واتخاذ القرارات السريعة."
+                                imageUrl="/team/maryam_shoueiki_profile_1771965136192.png"
                             />
                             <TeamMember
                                 name="عبد الله أبو صغيرة"
                                 role="شريك مؤسس ومدير تقني (CTO)"
                                 disc="نمط D/C"
                                 desc="يجمع بين الحزم والانضباط التحليلي، ويشرف على الجوانب التقنية والتشغيلية."
+                                imageUrl="/team/abdullah_abu_saghira_profile_1771965149395.png"
                             />
                             <TeamMember
                                 name="علي العلي"
                                 role="مدير تطوير الأعمال"
                                 disc="نمط D/I"
                                 desc="يجمع بين الحزم والتأثير، ويتمتع بمهارات تفاوض وبناء علاقات استراتيجية."
+                                imageUrl="/team/ali_al_ali_profile_1771965162839.png"
                             />
                             <TeamMember
                                 name="حور أحمد"
                                 role="مدير العمليات"
                                 disc="نمط S"
                                 desc="تركز على الانسجام الداخلي وتنظيم العمليات اليومية لضمان الاستقرار."
+                                imageUrl="/team/hour_ahmed_profile_1771965180365.png"
                             />
                             <TeamMember
                                 name="بشاير البلاوي"
                                 role="المستشار المالي والقانوني"
                                 disc="نمط C"
                                 desc="تحليلية ودقيقة، تهتم بالتفاصيل المالية والقانونية وتقليل المخاطر."
+                                imageUrl="https://api.dicebear.com/7.x/avataaars/svg?seed=Bashayer6"
                             />
                         </div>
                     </div>
@@ -143,15 +149,28 @@ function ValueCard({ icon, title, description }: { icon: React.ReactNode, title:
     )
 }
 
-function TeamMember({ name, role, disc, desc }: { name: string, role: string, disc: string, desc: string }) {
+function TeamMember({ name, role, disc, desc, imageUrl }: { name: string, role: string, disc: string, desc: string, imageUrl?: string }) {
     return (
-        <div className="p-6 rounded-2xl border bg-card text-right">
-            <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4">
+        <div className="p-6 rounded-2xl border bg-card text-right overflow-hidden flex flex-col">
+            {imageUrl && (
+                <div className="relative h-64 w-full mb-6 rounded-xl overflow-hidden group">
+                    <Image
+                        src={imageUrl}
+                        alt={name}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                        <span className="text-white text-sm font-medium">{name}</span>
+                    </div>
+                </div>
+            )}
+            <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4 w-fit mr-0 ml-auto">
                 {disc}
             </div>
             <h3 className="text-xl font-bold mb-1">{name}</h3>
             <p className="text-primary text-sm font-medium mb-4">{role}</p>
-            <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed flex-1">{desc}</p>
         </div>
     )
 }
