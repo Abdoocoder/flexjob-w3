@@ -2,10 +2,16 @@ import { createClient } from "@/lib/supabase/server"
 import { notFound, redirect } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, MapPin, DollarSign, Calendar, Users } from "lucide-react"
+import { ArrowRight, MapPin, DollarSign, Calendar, Users } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 import { ApplicationActions } from "@/components/application-actions"
+
+const statusLabels: Record<string, string> = {
+  open: "مفتوحة",
+  closed: "مغلقة",
+  filled: "مكتملة",
+}
 
 export default async function CompanyJobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -14,7 +20,6 @@ export default async function CompanyJobDetailPage({ params }: { params: Promise
 
   if (!user) redirect("/auth/login")
 
-  // Verify company ownership
   const { data: company } = await supabase
     .from("companies")
     .select("id")
@@ -32,7 +37,6 @@ export default async function CompanyJobDetailPage({ params }: { params: Promise
 
   if (!job) notFound()
 
-  // Fetch applications with worker profiles
   const { data: applications } = await supabase
     .from("applications")
     .select("*, profiles:worker_id(id, full_name, phone, city, rating, ratings_count)")
@@ -42,15 +46,15 @@ export default async function CompanyJobDetailPage({ params }: { params: Promise
   return (
     <div className="mx-auto max-w-3xl">
       <Link href="/dashboard/company" className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Back to Dashboard
+        <ArrowRight className="h-4 w-4" /> العودة للوحة التحكم
       </Link>
 
       <Card className="mb-6">
         <CardHeader>
           <div className="flex items-start justify-between gap-4">
             <CardTitle className="text-xl">{job.title}</CardTitle>
-            <Badge variant={job.status === "open" ? "default" : "secondary"} className="capitalize">
-              {job.status}
+            <Badge variant={job.status === "open" ? "default" : "secondary"}>
+              {statusLabels[job.status] || job.status}
             </Badge>
           </div>
         </CardHeader>
@@ -63,17 +67,17 @@ export default async function CompanyJobDetailPage({ params }: { params: Promise
             )}
             {job.salary && (
               <span className="flex items-center gap-1">
-                <DollarSign className="h-3.5 w-3.5" /> {job.salary} SAR
+                <DollarSign className="h-3.5 w-3.5" /> {job.salary} ريال
               </span>
             )}
             <span className="flex items-center gap-1">
-              <Users className="h-3.5 w-3.5" /> {job.workers_needed} needed
+              <Users className="h-3.5 w-3.5" /> {job.workers_needed} مطلوب
             </span>
             {job.start_date && (
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" />
-                {format(new Date(job.start_date), "MMM d, yyyy")}
-                {job.end_date && ` - ${format(new Date(job.end_date), "MMM d, yyyy")}`}
+                {format(new Date(job.start_date), "d MMM yyyy")}
+                {job.end_date && ` - ${format(new Date(job.end_date), "d MMM yyyy")}`}
               </span>
             )}
           </div>
@@ -85,16 +89,16 @@ export default async function CompanyJobDetailPage({ params }: { params: Promise
         </CardContent>
       </Card>
 
-      {/* Applications */}
+      {/* الطلبات */}
       <Card>
         <CardHeader>
           <CardTitle>
-            Applications ({applications?.length || 0})
+            الطلبات ({applications?.length || 0})
           </CardTitle>
         </CardHeader>
         <CardContent>
           {!applications || applications.length === 0 ? (
-            <p className="py-6 text-center text-muted-foreground">No applications yet</p>
+            <p className="py-6 text-center text-muted-foreground">لا توجد طلبات بعد</p>
           ) : (
             <div className="flex flex-col gap-3">
               {applications.map((app) => (
@@ -104,15 +108,15 @@ export default async function CompanyJobDetailPage({ params }: { params: Promise
                 >
                   <div>
                     <p className="font-medium text-foreground">
-                      {app.profiles?.full_name || "Unknown Worker"}
+                      {app.profiles?.full_name || "عامل غير معروف"}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {app.profiles?.city && `${app.profiles.city} - `}
-                      {app.profiles?.phone || "No phone"}
-                      {app.profiles?.rating ? ` - Rating: ${Number(app.profiles.rating).toFixed(1)}/5` : ""}
+                      {app.profiles?.phone || "بدون رقم جوال"}
+                      {app.profiles?.rating ? ` - التقييم: ${Number(app.profiles.rating).toFixed(1)}/5` : ""}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Applied {format(new Date(app.created_at), "MMM d, yyyy")}
+                      تقدّم بتاريخ {format(new Date(app.created_at), "d MMM yyyy")}
                     </p>
                   </div>
                   <ApplicationActions

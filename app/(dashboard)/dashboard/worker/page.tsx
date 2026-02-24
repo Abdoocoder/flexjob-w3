@@ -6,6 +6,12 @@ import { Briefcase, Clock, CheckCircle2, XCircle, Star } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 
+const statusLabels: Record<string, string> = {
+  pending: "قيد الانتظار",
+  accepted: "مقبول",
+  rejected: "مرفوض",
+}
+
 export default async function WorkerDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -13,14 +19,12 @@ export default async function WorkerDashboard() {
   if (!user) redirect("/auth/login")
   if (user.user_metadata?.role !== "worker") redirect("/dashboard/company")
 
-  // Fetch worker's applications with job details
   const { data: applications } = await supabase
     .from("applications")
     .select("*, jobs(id, title, city, salary, status, start_date, companies(company_name))")
     .eq("worker_id", user.id)
     .order("created_at", { ascending: false })
 
-  // Fetch worker's profile for rating
   const { data: profile } = await supabase
     .from("profiles")
     .select("rating, ratings_count")
@@ -30,53 +34,52 @@ export default async function WorkerDashboard() {
   const total = applications?.length || 0
   const pending = applications?.filter((a) => a.status === "pending").length || 0
   const accepted = applications?.filter((a) => a.status === "accepted").length || 0
-  const rejected = applications?.filter((a) => a.status === "rejected").length || 0
 
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Worker Dashboard</h1>
+        <h1 className="text-2xl font-bold text-foreground">لوحة تحكم العامل</h1>
         <p className="mt-1 text-muted-foreground">
-          Welcome back, {user.user_metadata?.full_name || "Worker"}
+          مرحباً بعودتك، {user.user_metadata?.full_name || "عامل"}
         </p>
       </div>
 
-      {/* Stats */}
+      {/* الإحصائيات */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Total Applications"
+          label="إجمالي الطلبات"
           value={total}
           icon={<Briefcase className="h-5 w-5 text-primary" />}
         />
         <StatCard
-          label="Pending"
+          label="قيد الانتظار"
           value={pending}
           icon={<Clock className="h-5 w-5 text-accent-foreground" />}
         />
         <StatCard
-          label="Accepted"
+          label="مقبولة"
           value={accepted}
           icon={<CheckCircle2 className="h-5 w-5 text-success" />}
         />
         <StatCard
-          label="Rating"
-          value={profile?.rating ? Number(profile.rating).toFixed(1) : "N/A"}
+          label="التقييم"
+          value={profile?.rating ? Number(profile.rating).toFixed(1) : "لا يوجد"}
           icon={<Star className="h-5 w-5 text-accent-foreground" />}
-          subtitle={profile?.ratings_count ? `${profile.ratings_count} reviews` : undefined}
+          subtitle={profile?.ratings_count ? `${profile.ratings_count} تقييم` : undefined}
         />
       </div>
 
-      {/* Applications List */}
+      {/* قائمة الطلبات */}
       <Card>
         <CardHeader>
-          <CardTitle>Your Applications</CardTitle>
+          <CardTitle>طلباتك</CardTitle>
         </CardHeader>
         <CardContent>
           {!applications || applications.length === 0 ? (
             <div className="py-8 text-center">
-              <p className="text-muted-foreground">No applications yet</p>
+              <p className="text-muted-foreground">لا توجد طلبات بعد</p>
               <Link href="/jobs" className="mt-2 inline-block text-sm font-medium text-primary hover:underline">
-                Browse available jobs
+                تصفّح الوظائف المتاحة
               </Link>
             </div>
           ) : (
@@ -92,10 +95,10 @@ export default async function WorkerDashboard() {
                     <p className="text-sm text-muted-foreground">
                       {app.jobs?.companies?.company_name}
                       {app.jobs?.city && ` - ${app.jobs.city}`}
-                      {app.jobs?.salary && ` - ${app.jobs.salary} SAR`}
+                      {app.jobs?.salary && ` - ${app.jobs.salary} ريال`}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Applied {format(new Date(app.created_at), "MMM d, yyyy")}
+                      تم التقديم {format(new Date(app.created_at), "d MMM yyyy")}
                     </p>
                   </div>
                   <StatusBadge status={app.status} />
@@ -143,8 +146,8 @@ function StatusBadge({ status }: { status: string }) {
     rejected: "destructive",
   }
   return (
-    <Badge variant={variants[status] || "secondary"} className="capitalize">
-      {status}
+    <Badge variant={variants[status] || "secondary"}>
+      {statusLabels[status] || status}
     </Badge>
   )
 }

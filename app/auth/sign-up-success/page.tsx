@@ -11,15 +11,15 @@ export default function SignUpSuccessPage() {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
             <MailCheck className="h-7 w-7 text-primary" />
           </div>
-          <CardTitle className="text-2xl">Check your email</CardTitle>
+          <CardTitle className="text-2xl">تحقق من بريدك الإلكتروني</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <p className="text-muted-foreground">
-            We sent you a confirmation link. Please check your inbox and click the link to activate your account.
+            أرسلنا لك رابط تأكيد. يرجى التحقق من صندوق الوارد والنقر على الرابط لتفعيل حسابك.
           </p>
           <Link href="/auth/login">
             <Button variant="outline" className="w-full">
-              Back to Login
+              العودة لتسجيل الدخول
             </Button>
           </Link>
         </CardContent>

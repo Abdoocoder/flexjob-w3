@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { Briefcase, Users, Star, ArrowRight, Shield, Clock, MapPin } from "lucide-react"
+import { Briefcase, Users, Star, ArrowLeft, Shield, Clock, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 async function getUser() {
@@ -28,109 +28,108 @@ export default async function LandingPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
               <Briefcase className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-foreground">Flex Job</span>
+            <span className="text-xl font-bold text-foreground">فلكس جوب</span>
           </Link>
           <nav className="flex items-center gap-3">
             <Link href="/auth/login">
-              <Button variant="ghost" size="sm">Log In</Button>
+              <Button variant="ghost" size="sm">تسجيل الدخول</Button>
             </Link>
             <Link href="/auth/sign-up">
-              <Button size="sm">Get Started</Button>
+              <Button size="sm">ابدأ الآن</Button>
             </Link>
           </nav>
         </div>
       </header>
 
       <main className="flex-1">
-        {/* Hero */}
+        {/* البطل */}
         <section className="relative overflow-hidden py-24 lg:py-32">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--primary)_0%,transparent_50%)] opacity-[0.07]" />
           <div className="relative mx-auto max-w-7xl px-4 text-center">
             <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border bg-card px-4 py-1.5 text-sm text-muted-foreground">
               <Clock className="h-3.5 w-3.5" />
-              <span>Flexible work, on your terms</span>
+              <span>عمل مرن، بشروطك</span>
             </div>
             <h1 className="mx-auto max-w-4xl text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Find the right work.{" "}
-              <span className="text-primary">Hire the right people.</span>
+              اعثر على العمل المناسب.{" "}
+              <span className="text-primary">وظّف الأشخاص المناسبين.</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
-              Flex Job connects workers with businesses looking for flexible,
-              temporary, and part-time help. Apply in seconds, manage your team
-              with ease.
+              فلكس جوب يربط العمال بالشركات التي تبحث عن مساعدة مرنة ومؤقتة
+              وبدوام جزئي. قدّم في ثوانٍ، وأدر فريقك بسهولة.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/auth/sign-up?role=worker">
                 <Button size="lg" className="gap-2 px-8">
-                  Find Work <ArrowRight className="h-4 w-4" />
+                  ابحث عن عمل <ArrowLeft className="h-4 w-4" />
                 </Button>
               </Link>
               <Link href="/auth/sign-up?role=company">
                 <Button size="lg" variant="outline" className="gap-2 px-8">
-                  Hire Workers <Users className="h-4 w-4" />
+                  وظّف عمالاً <Users className="h-4 w-4" />
                 </Button>
               </Link>
             </div>
           </div>
         </section>
 
-        {/* Features */}
+        {/* المميزات */}
         <section className="border-t bg-card py-20">
           <div className="mx-auto max-w-7xl px-4">
             <h2 className="text-center text-3xl font-bold text-foreground text-balance">
-              Why choose Flex Job?
+              لماذا تختار فلكس جوب؟
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground text-pretty">
-              A modern marketplace built for the way people actually work today.
+              سوق عمل حديث مبني لطريقة عمل الناس اليوم.
             </p>
             <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               <FeatureCard
                 icon={<Clock className="h-6 w-6" />}
-                title="Quick Applications"
-                description="Apply to jobs in seconds. No long forms, no hassle. Just find work that fits your schedule."
+                title="تقديم سريع"
+                description="قدّم على الوظائف في ثوانٍ. بدون نماذج طويلة أو تعقيد. فقط اعثر على عمل يناسب جدولك."
               />
               <FeatureCard
                 icon={<MapPin className="h-6 w-6" />}
-                title="Local Opportunities"
-                description="Find jobs near you. Filter by city and location to discover work that is convenient."
+                title="فرص محلية"
+                description="اعثر على وظائف قريبة منك. فلتر حسب المدينة والموقع لاكتشاف عمل مناسب."
               />
               <FeatureCard
                 icon={<Shield className="h-6 w-6" />}
-                title="Verified Profiles"
-                description="Every worker and company goes through verification for a trustworthy marketplace."
+                title="ملفات موثقة"
+                description="كل عامل وشركة يمرّ بعملية توثيق لضمان سوق عمل موثوق."
               />
               <FeatureCard
                 icon={<Star className="h-6 w-6" />}
-                title="Ratings & Reviews"
-                description="Build your reputation with honest ratings from both workers and employers."
+                title="التقييمات والمراجعات"
+                description="ابنِ سمعتك من خلال تقييمات صادقة من العمال وأصحاب العمل."
               />
               <FeatureCard
                 icon={<Briefcase className="h-6 w-6" />}
-                title="Company Dashboard"
-                description="Post jobs, review applications, and manage your workforce all in one place."
+                title="لوحة تحكم الشركة"
+                description="انشر وظائف، راجع الطلبات، وأدر فريق عملك من مكان واحد."
               />
               <FeatureCard
                 icon={<Users className="h-6 w-6" />}
-                title="Worker Dashboard"
-                description="Track your applications, manage your profile, and find new opportunities."
+                title="لوحة تحكم العامل"
+                description="تابع طلباتك، أدر ملفك الشخصي، واعثر على فرص جديدة."
               />
             </div>
           </div>
         </section>
 
-        {/* CTA */}
+        {/* دعوة للعمل */}
         <section className="py-20">
           <div className="mx-auto max-w-3xl px-4 text-center">
             <h2 className="text-3xl font-bold text-foreground text-balance">
-              Ready to get started?
+              مستعد للبدء؟
             </h2>
             <p className="mt-4 text-muted-foreground text-pretty">
-              Join Flex Job today and start connecting with opportunities.
+              انضم إلى فلكس جوب اليوم وابدأ التواصل مع الفرص.
             </p>
             <div className="mt-8">
               <Link href="/auth/sign-up">
                 <Button size="lg" className="gap-2 px-10">
-                  Create Free Account <ArrowRight className="h-4 w-4" />
+                  أنشئ حساباً مجانياً <ArrowLeft className="h-4 w-4" />
                 </Button>
               </Link>
             </div>
@@ -140,7 +139,7 @@ export default async function LandingPage() {
 
       <footer className="border-t py-8">
         <div className="mx-auto max-w-7xl px-4 text-center text-sm text-muted-foreground">
-          Flex Job &copy; {new Date().getFullYear()}. All rights reserved.
+          {'فلكس جوب \u00A9'} {new Date().getFullYear()}. جميع الحقوق محفوظة.
         </div>
       </footer>
     </div>

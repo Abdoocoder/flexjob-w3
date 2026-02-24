@@ -34,7 +34,7 @@ export function VerifyButton({
     }
 
     setVerified(!verified)
-    toast.success(verified ? "User unverified" : "User verified")
+    toast.success(verified ? "تم إلغاء التوثيق" : "تم التوثيق بنجاح")
     setLoading(false)
     router.refresh()
   }
@@ -54,7 +54,7 @@ export function VerifyButton({
       ) : (
         <Shield className="h-3 w-3" />
       )}
-      {verified ? "Unverify" : "Verify"}
+      {verified ? "إلغاء التوثيق" : "توثيق"}
     </Button>
   )
 }

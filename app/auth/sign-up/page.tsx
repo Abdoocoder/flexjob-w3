@@ -72,13 +72,13 @@ export default function SignUpPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
               <Briefcase className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-foreground">Flex Job</span>
+            <span className="text-xl font-bold text-foreground">فلكس جوب</span>
           </Link>
-          <CardTitle className="text-2xl">Create your account</CardTitle>
-          <CardDescription>Choose your account type and fill in your details</CardDescription>
+          <CardTitle className="text-2xl">أنشئ حسابك</CardTitle>
+          <CardDescription>اختر نوع الحساب واملأ بياناتك</CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Role Selector */}
+          {/* اختيار نوع الحساب */}
           <div className="mb-6 grid grid-cols-2 gap-3">
             <button
               type="button"
@@ -90,7 +90,7 @@ export default function SignUpPage() {
               }`}
             >
               <User className="h-6 w-6" />
-              <span className="text-sm font-medium">Worker</span>
+              <span className="text-sm font-medium">عامل</span>
             </button>
             <button
               type="button"
@@ -102,23 +102,23 @@ export default function SignUpPage() {
               }`}
             >
               <Building2 className="h-6 w-6" />
-              <span className="text-sm font-medium">Company</span>
+              <span className="text-sm font-medium">شركة</span>
             </button>
           </div>
 
           <form onSubmit={handleSignUp} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="fullName">Full Name</Label>
+              <Label htmlFor="fullName">الاسم الكامل</Label>
               <Input
                 id="fullName"
-                placeholder="Your full name"
+                placeholder="اسمك الكامل"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">البريد الإلكتروني</Label>
               <Input
                 id="email"
                 type="email"
@@ -129,11 +129,11 @@ export default function SignUpPage() {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">كلمة المرور</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Min 6 characters"
+                placeholder="6 أحرف على الأقل"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -142,7 +142,7 @@ export default function SignUpPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone">رقم الجوال</Label>
                 <Input
                   id="phone"
                   placeholder="05XXXXXXXX"
@@ -151,10 +151,10 @@ export default function SignUpPage() {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="city">City</Label>
+                <Label htmlFor="city">المدينة</Label>
                 <Input
                   id="city"
-                  placeholder="Riyadh"
+                  placeholder="الرياض"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                 />
@@ -164,20 +164,20 @@ export default function SignUpPage() {
             {role === "company" && (
               <>
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="companyName">Company Name</Label>
+                  <Label htmlFor="companyName">اسم الشركة</Label>
                   <Input
                     id="companyName"
-                    placeholder="Your company name"
+                    placeholder="اسم شركتك"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     required
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="crNumber">CR Number (optional)</Label>
+                  <Label htmlFor="crNumber">رقم السجل التجاري (اختياري)</Label>
                   <Input
                     id="crNumber"
-                    placeholder="Commercial registration number"
+                    placeholder="رقم السجل التجاري"
                     value={crNumber}
                     onChange={(e) => setCrNumber(e.target.value)}
                   />
@@ -186,14 +186,14 @@ export default function SignUpPage() {
             )}
 
             <Button type="submit" className="mt-2 w-full" disabled={loading}>
-              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Create Account
+              {loading ? <Loader2 className="ml-2 h-4 w-4 animate-spin" /> : null}
+              إنشاء الحساب
             </Button>
           </form>
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
+            لديك حساب بالفعل؟{" "}
             <Link href="/auth/login" className="font-medium text-primary hover:underline">
-              Sign in
+              سجّل الدخول
             </Link>
           </p>
         </CardContent>

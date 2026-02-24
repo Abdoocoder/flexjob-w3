@@ -1,12 +1,18 @@
 import { createClient } from "@/lib/supabase/server"
 import { notFound } from "next/navigation"
-import { MapPin, Calendar, DollarSign, Users, Building2, ArrowLeft } from "lucide-react"
+import { MapPin, Calendar, DollarSign, Users, Building2, ArrowRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { format } from "date-fns"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ApplyButton } from "@/components/apply-button"
+
+const statusLabels: Record<string, string> = {
+  open: "مفتوحة",
+  closed: "مغلقة",
+  filled: "مكتملة",
+}
 
 export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -38,7 +44,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
   return (
     <div className="mx-auto max-w-3xl">
       <Link href="/jobs" className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Back to Jobs
+        <ArrowRight className="h-4 w-4" /> العودة للوظائف
       </Link>
 
       <Card>
@@ -55,63 +61,63 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
             </div>
             <Badge
               variant={job.status === "open" ? "default" : "secondary"}
-              className="shrink-0 text-sm capitalize"
+              className="shrink-0 text-sm"
             >
-              {job.status}
+              {statusLabels[job.status] || job.status}
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
-          {/* Details grid */}
+          {/* شبكة التفاصيل */}
           <div className="grid grid-cols-2 gap-4 rounded-lg border bg-muted/30 p-4 sm:grid-cols-4">
             {job.city && (
               <div className="flex flex-col gap-1">
                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <MapPin className="h-3 w-3" /> Location
+                  <MapPin className="h-3 w-3" /> الموقع
                 </span>
                 <span className="text-sm font-medium text-foreground">
-                  {job.city}{job.location ? `, ${job.location}` : ""}
+                  {job.city}{job.location ? `، ${job.location}` : ""}
                 </span>
               </div>
             )}
             {job.salary && (
               <div className="flex flex-col gap-1">
                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <DollarSign className="h-3 w-3" /> Salary
+                  <DollarSign className="h-3 w-3" /> الراتب
                 </span>
-                <span className="text-sm font-medium text-foreground">{job.salary} SAR</span>
+                <span className="text-sm font-medium text-foreground">{job.salary} ريال</span>
               </div>
             )}
             <div className="flex flex-col gap-1">
               <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Users className="h-3 w-3" /> Workers Needed
+                <Users className="h-3 w-3" /> العمال المطلوبين
               </span>
               <span className="text-sm font-medium text-foreground">{job.workers_needed}</span>
             </div>
             {job.start_date && (
               <div className="flex flex-col gap-1">
                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Calendar className="h-3 w-3" /> Duration
+                  <Calendar className="h-3 w-3" /> المدة
                 </span>
                 <span className="text-sm font-medium text-foreground">
-                  {format(new Date(job.start_date), "MMM d, yyyy")}
-                  {job.end_date && ` - ${format(new Date(job.end_date), "MMM d, yyyy")}`}
+                  {format(new Date(job.start_date), "d MMM yyyy")}
+                  {job.end_date && ` - ${format(new Date(job.end_date), "d MMM yyyy")}`}
                 </span>
               </div>
             )}
           </div>
 
-          {/* Description */}
+          {/* الوصف */}
           {job.description && (
             <div>
-              <h3 className="mb-2 font-semibold text-foreground">Description</h3>
+              <h3 className="mb-2 font-semibold text-foreground">الوصف</h3>
               <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
                 {job.description}
               </p>
             </div>
           )}
 
-          {/* Apply Button */}
+          {/* زر التقديم */}
           {isWorker && user && job.status === "open" && (
             <div className="border-t pt-4">
               <ApplyButton
@@ -125,7 +131,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
           {!user && (
             <div className="border-t pt-4">
               <Link href="/auth/login">
-                <Button className="w-full">Sign in to Apply</Button>
+                <Button className="w-full">سجّل الدخول للتقديم</Button>
               </Link>
             </div>
           )}

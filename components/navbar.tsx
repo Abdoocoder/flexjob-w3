@@ -31,10 +31,16 @@ export function Navbar({
         ? "/dashboard/admin"
         : "/dashboard/worker"
 
+  const roleLabels: Record<string, string> = {
+    worker: "عامل",
+    company: "شركة",
+    admin: "مدير",
+  }
+
   const navLinks = [
-    { href: dashboardPath, label: "Dashboard", icon: LayoutDashboard },
-    { href: "/jobs", label: "Jobs", icon: Briefcase },
-    { href: "/profile", label: "Profile", icon: User },
+    { href: dashboardPath, label: "لوحة التحكم", icon: LayoutDashboard },
+    { href: "/jobs", label: "الوظائف", icon: Briefcase },
+    { href: "/profile", label: "الملف الشخصي", icon: User },
   ]
 
   return (
@@ -45,7 +51,7 @@ export function Navbar({
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
               <Briefcase className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="text-lg font-bold text-foreground">Flex Job</span>
+            <span className="text-lg font-bold text-foreground">فلكس جوب</span>
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
             {navLinks.map((link) => {
@@ -69,17 +75,17 @@ export function Navbar({
 
         <div className="hidden items-center gap-3 md:flex">
           <span className="text-sm text-muted-foreground">
-            {fullName || "User"}{" "}
-            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary capitalize">
-              {role}
+            {fullName || "مستخدم"}{" "}
+            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
+              {roleLabels[role] || role}
             </span>
           </span>
           <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
-            <LogOut className="h-4 w-4" /> Sign Out
+            <LogOut className="h-4 w-4" /> تسجيل الخروج
           </Button>
         </div>
 
-        {/* Mobile toggle */}
+        {/* زر القائمة للجوال */}
         <Button
           variant="ghost"
           size="sm"
@@ -90,7 +96,7 @@ export function Navbar({
         </Button>
       </div>
 
-      {/* Mobile nav */}
+      {/* قائمة الجوال */}
       {mobileOpen && (
         <div className="border-t bg-card p-4 md:hidden">
           <nav className="flex flex-col gap-2">
@@ -111,7 +117,7 @@ export function Navbar({
               )
             })}
             <Button variant="ghost" size="sm" onClick={handleLogout} className="w-full justify-start gap-2">
-              <LogOut className="h-4 w-4" /> Sign Out
+              <LogOut className="h-4 w-4" /> تسجيل الخروج
             </Button>
           </nav>
         </div>

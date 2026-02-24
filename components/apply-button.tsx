@@ -31,7 +31,7 @@ export function ApplyButton({
 
     if (error) {
       if (error.code === "23505") {
-        toast.error("You have already applied to this job")
+        toast.error("لقد قدّمت على هذه الوظيفة مسبقاً")
       } else {
         toast.error(error.message)
       }
@@ -40,7 +40,7 @@ export function ApplyButton({
     }
 
     setApplied(true)
-    toast.success("Application submitted successfully!")
+    toast.success("تم إرسال الطلب بنجاح!")
     setLoading(false)
     router.refresh()
   }
@@ -48,15 +48,15 @@ export function ApplyButton({
   if (applied) {
     return (
       <Button disabled className="w-full gap-2" variant="secondary">
-        <CheckCircle2 className="h-4 w-4" /> Already Applied
+        <CheckCircle2 className="h-4 w-4" /> تم التقديم مسبقاً
       </Button>
     )
   }
 
   return (
     <Button onClick={handleApply} disabled={loading} className="w-full">
-      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-      Apply Now
+      {loading ? <Loader2 className="ml-2 h-4 w-4 animate-spin" /> : null}
+      قدّم الآن
     </Button>
   )
 }

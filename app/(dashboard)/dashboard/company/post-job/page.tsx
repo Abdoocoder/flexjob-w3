@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowLeft, Loader2 } from "lucide-react"
+import { ArrowRight, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 
@@ -32,12 +32,11 @@ export default function PostJobPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-      toast.error("You must be logged in")
+      toast.error("يجب تسجيل الدخول أولاً")
       setLoading(false)
       return
     }
 
-    // Get company
     const { data: company } = await supabase
       .from("companies")
       .select("id")
@@ -45,7 +44,7 @@ export default function PostJobPage() {
       .single()
 
     if (!company) {
-      toast.error("Company profile not found")
+      toast.error("لم يتم العثور على ملف الشركة")
       setLoading(false)
       return
     }
@@ -68,7 +67,7 @@ export default function PostJobPage() {
       return
     }
 
-    toast.success("Job posted successfully!")
+    toast.success("تم نشر الوظيفة بنجاح!")
     router.push("/dashboard/company")
     router.refresh()
   }
@@ -76,31 +75,31 @@ export default function PostJobPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <Link href="/dashboard/company" className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Back to Dashboard
+        <ArrowRight className="h-4 w-4" /> العودة للوحة التحكم
       </Link>
 
       <Card>
         <CardHeader>
-          <CardTitle>Post a New Job</CardTitle>
-          <CardDescription>Fill in the details for your new job listing</CardDescription>
+          <CardTitle>نشر وظيفة جديدة</CardTitle>
+          <CardDescription>املأ تفاصيل الوظيفة الجديدة</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="title">Job Title *</Label>
+              <Label htmlFor="title">المسمى الوظيفي *</Label>
               <Input
                 id="title"
-                placeholder="e.g. Warehouse Assistant"
+                placeholder="مثال: مساعد مستودع"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">الوصف</Label>
               <Textarea
                 id="description"
-                placeholder="Describe the job responsibilities and requirements..."
+                placeholder="اشرح مسؤوليات ومتطلبات الوظيفة..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
@@ -108,19 +107,19 @@ export default function PostJobPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="city">City</Label>
+                <Label htmlFor="city">المدينة</Label>
                 <Input
                   id="city"
-                  placeholder="Riyadh"
+                  placeholder="الرياض"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="location">Location Detail</Label>
+                <Label htmlFor="location">تفاصيل الموقع</Label>
                 <Input
                   id="location"
-                  placeholder="Specific location"
+                  placeholder="الموقع المحدد"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                 />
@@ -128,7 +127,7 @@ export default function PostJobPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="salary">Salary (SAR)</Label>
+                <Label htmlFor="salary">الراتب (ريال)</Label>
                 <Input
                   id="salary"
                   type="number"
@@ -139,7 +138,7 @@ export default function PostJobPage() {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="workersNeeded">Workers Needed</Label>
+                <Label htmlFor="workersNeeded">عدد العمال المطلوبين</Label>
                 <Input
                   id="workersNeeded"
                   type="number"
@@ -151,7 +150,7 @@ export default function PostJobPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="startDate">Start Date</Label>
+                <Label htmlFor="startDate">تاريخ البداية</Label>
                 <Input
                   id="startDate"
                   type="date"
@@ -160,7 +159,7 @@ export default function PostJobPage() {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="endDate">End Date</Label>
+                <Label htmlFor="endDate">تاريخ النهاية</Label>
                 <Input
                   id="endDate"
                   type="date"
@@ -170,8 +169,8 @@ export default function PostJobPage() {
               </div>
             </div>
             <Button type="submit" className="mt-2 w-full" disabled={loading}>
-              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Post Job
+              {loading ? <Loader2 className="ml-2 h-4 w-4 animate-spin" /> : null}
+              نشر الوظيفة
             </Button>
           </form>
         </CardContent>

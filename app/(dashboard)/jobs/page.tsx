@@ -13,17 +13,17 @@ export default async function JobsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Available Jobs</h1>
+        <h1 className="text-2xl font-bold text-foreground">الوظائف المتاحة</h1>
         <p className="mt-1 text-muted-foreground">
-          Browse open positions and apply today
+          تصفّح الوظائف المفتوحة وقدّم اليوم
         </p>
       </div>
 
       {!jobs || jobs.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border bg-card py-16 text-center">
-          <p className="text-lg font-medium text-foreground">No jobs available yet</p>
+          <p className="text-lg font-medium text-foreground">لا توجد وظائف متاحة حالياً</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Check back soon for new opportunities
+            تحقق لاحقاً للاطلاع على فرص جديدة
           </p>
         </div>
       ) : (

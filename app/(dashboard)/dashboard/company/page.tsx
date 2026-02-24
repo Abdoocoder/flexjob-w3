@@ -7,6 +7,12 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { format } from "date-fns"
 
+const statusLabels: Record<string, string> = {
+  open: "مفتوحة",
+  closed: "مغلقة",
+  filled: "مكتملة",
+}
+
 export default async function CompanyDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -14,7 +20,6 @@ export default async function CompanyDashboard() {
   if (!user) redirect("/auth/login")
   if (user.user_metadata?.role !== "company") redirect("/dashboard/worker")
 
-  // Fetch company
   const { data: company } = await supabase
     .from("companies")
     .select("*")
@@ -23,7 +28,6 @@ export default async function CompanyDashboard() {
 
   if (!company) redirect("/auth/login")
 
-  // Fetch company jobs with application counts
   const { data: jobs } = await supabase
     .from("jobs")
     .select("*, applications(id, status, worker_id)")
@@ -42,51 +46,51 @@ export default async function CompanyDashboard() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Company Dashboard</h1>
+          <h1 className="text-2xl font-bold text-foreground">لوحة تحكم الشركة</h1>
           <p className="mt-1 text-muted-foreground">{company.company_name}</p>
         </div>
         <Link href="/dashboard/company/post-job">
           <Button className="gap-2">
-            <Plus className="h-4 w-4" /> Post a Job
+            <Plus className="h-4 w-4" /> انشر وظيفة
           </Button>
         </Link>
       </div>
 
-      {/* Stats */}
+      {/* الإحصائيات */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Total Jobs"
+          label="إجمالي الوظائف"
           value={totalJobs}
           icon={<Briefcase className="h-5 w-5 text-primary" />}
         />
         <StatCard
-          label="Open Jobs"
+          label="وظائف مفتوحة"
           value={openJobs}
           icon={<Clock className="h-5 w-5 text-accent-foreground" />}
         />
         <StatCard
-          label="Total Applications"
+          label="إجمالي الطلبات"
           value={totalApplications}
           icon={<Users className="h-5 w-5 text-primary" />}
         />
         <StatCard
-          label="Pending Review"
+          label="بانتظار المراجعة"
           value={pendingApplications}
           icon={<Star className="h-5 w-5 text-accent-foreground" />}
         />
       </div>
 
-      {/* Jobs */}
+      {/* الوظائف */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Your Jobs</CardTitle>
+          <CardTitle>وظائفك</CardTitle>
         </CardHeader>
         <CardContent>
           {!jobs || jobs.length === 0 ? (
             <div className="py-8 text-center">
-              <p className="text-muted-foreground">No jobs posted yet</p>
+              <p className="text-muted-foreground">لم يتم نشر وظائف بعد</p>
               <Link href="/dashboard/company/post-job" className="mt-2 inline-block text-sm font-medium text-primary hover:underline">
-                Post your first job
+                انشر وظيفتك الأولى
               </Link>
             </div>
           ) : (
@@ -108,21 +112,20 @@ export default async function CompanyDashboard() {
                         <p className="font-medium text-foreground">{job.title}</p>
                         <Badge
                           variant={job.status === "open" ? "default" : "secondary"}
-                          className="capitalize"
                         >
-                          {job.status}
+                          {statusLabels[job.status] || job.status}
                         </Badge>
                       </div>
                       <p className="mt-1 text-sm text-muted-foreground">
                         {job.city && `${job.city} - `}
-                        {job.salary && `${job.salary} SAR - `}
-                        {format(new Date(job.created_at), "MMM d, yyyy")}
+                        {job.salary && `${job.salary} ريال - `}
+                        {format(new Date(job.created_at), "d MMM yyyy")}
                       </p>
                     </div>
-                    <div className="text-right text-sm">
-                      <p className="font-medium text-foreground">{appCount} applications</p>
+                    <div className="text-sm text-start">
+                      <p className="font-medium text-foreground">{appCount} طلب</p>
                       {pendingCount > 0 && (
-                        <p className="text-xs text-primary">{pendingCount} pending</p>
+                        <p className="text-xs text-primary">{pendingCount} قيد الانتظار</p>
                       )}
                     </div>
                   </Link>

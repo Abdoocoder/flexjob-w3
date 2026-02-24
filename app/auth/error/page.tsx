@@ -11,14 +11,14 @@ export default function AuthErrorPage() {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
             <AlertTriangle className="h-7 w-7 text-destructive" />
           </div>
-          <CardTitle className="text-2xl">Authentication Error</CardTitle>
+          <CardTitle className="text-2xl">خطأ في المصادقة</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <p className="text-muted-foreground">
-            Something went wrong during authentication. Please try again.
+            حدث خطأ أثناء عملية المصادقة. يرجى المحاولة مرة أخرى.
           </p>
           <Link href="/auth/login">
-            <Button className="w-full">Try Again</Button>
+            <Button className="w-full">حاول مرة أخرى</Button>
           </Link>
         </CardContent>
       </Card>

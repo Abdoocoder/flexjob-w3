@@ -23,6 +23,12 @@ interface Job {
   } | null
 }
 
+const statusLabels: Record<string, string> = {
+  open: "مفتوحة",
+  closed: "مغلقة",
+  filled: "مكتملة",
+}
+
 export function JobCard({ job }: { job: Job }) {
   return (
     <Link href={`/jobs/${job.id}`}>
@@ -42,9 +48,9 @@ export function JobCard({ job }: { job: Job }) {
             </div>
             <Badge
               variant={job.status === "open" ? "default" : "secondary"}
-              className="shrink-0 capitalize"
+              className="shrink-0"
             >
-              {job.status}
+              {statusLabels[job.status] || job.status}
             </Badge>
           </div>
         </CardHeader>
@@ -62,18 +68,18 @@ export function JobCard({ job }: { job: Job }) {
             )}
             {job.salary && (
               <span className="flex items-center gap-1">
-                <DollarSign className="h-3 w-3" /> {job.salary} SAR
+                <DollarSign className="h-3 w-3" /> {job.salary} ريال
               </span>
             )}
             {job.workers_needed > 0 && (
               <span className="flex items-center gap-1">
-                <Users className="h-3 w-3" /> {job.workers_needed} needed
+                <Users className="h-3 w-3" /> {job.workers_needed} مطلوب
               </span>
             )}
             {job.start_date && (
               <span className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" /> {format(new Date(job.start_date), "MMM d")}
-                {job.end_date && ` - ${format(new Date(job.end_date), "MMM d")}`}
+                <Calendar className="h-3 w-3" /> {format(new Date(job.start_date), "d MMM")}
+                {job.end_date && ` - ${format(new Date(job.end_date), "d MMM")}`}
               </span>
             )}
           </div>

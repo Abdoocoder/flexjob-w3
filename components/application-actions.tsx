@@ -8,6 +8,12 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
+const statusLabels: Record<string, string> = {
+  pending: "قيد الانتظار",
+  accepted: "مقبول",
+  rejected: "مرفوض",
+}
+
 export function ApplicationActions({
   applicationId,
   currentStatus,
@@ -35,7 +41,7 @@ export function ApplicationActions({
     }
 
     setStatus(newStatus)
-    toast.success(`Application ${newStatus}`)
+    toast.success(newStatus === "accepted" ? "تم قبول الطلب" : "تم رفض الطلب")
     setLoading(null)
     router.refresh()
   }
@@ -44,9 +50,8 @@ export function ApplicationActions({
     return (
       <Badge
         variant={status === "accepted" ? "default" : "destructive"}
-        className="capitalize"
       >
-        {status}
+        {statusLabels[status] || status}
       </Badge>
     )
   }
@@ -65,7 +70,7 @@ export function ApplicationActions({
         ) : (
           <Check className="h-3 w-3" />
         )}
-        Accept
+        قبول
       </Button>
       <Button
         size="sm"
@@ -79,7 +84,7 @@ export function ApplicationActions({
         ) : (
           <X className="h-3 w-3" />
         )}
-        Reject
+        رفض
       </Button>
     </div>
   )
