@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
@@ -48,9 +49,13 @@ export function Navbar({
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link href={dashboardPath} className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <Briefcase className="h-4 w-4 text-primary-foreground" />
-            </div>
+            <Image
+              src="/flexjob-logo.png"
+              alt="Flexjob Logo"
+              width={32}
+              height={32}
+              className="rounded-lg object-contain"
+            />
             <span className="text-lg font-bold text-foreground">فلكس جوب</span>
           </Link>
           <nav className="hidden items-center gap-1 md:flex">

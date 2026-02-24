@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { Briefcase, Users, Star, ArrowLeft, Shield, Clock, MapPin } from "lucide-react"
@@ -25,9 +26,13 @@ export default async function LandingPage() {
       <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <Briefcase className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <Image
+              src="/flexjob-logo.png"
+              alt="Flexjob Logo"
+              width={36}
+              height={36}
+              className="rounded-lg object-contain"
+            />
             <span className="text-xl font-bold text-foreground">فلكس جوب</span>
           </Link>
           <nav className="flex items-center gap-3">
