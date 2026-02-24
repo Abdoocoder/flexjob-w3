@@ -31,8 +31,11 @@ export default async function LandingPage() {
             <span className="text-xl font-bold text-foreground">فلكس جوب</span>
           </Link>
           <nav className="flex items-center gap-3">
+            <Link href="/about">
+              <Button variant="ghost" size="sm">عن المنصة</Button>
+            </Link>
             <Link href="/auth/login">
-              <Button variant="ghost" size="sm">تسجيل الدخول</Button>
+              <Button variant="outline" size="sm">تسجيل الدخول</Button>
             </Link>
             <Link href="/auth/sign-up">
               <Button size="sm">ابدأ الآن</Button>
@@ -51,22 +54,20 @@ export default async function LandingPage() {
               <span>عمل مرن، بشروطك</span>
             </div>
             <h1 className="mx-auto max-w-4xl text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              اعثر على العمل المناسب.{" "}
-              <span className="text-primary">وظّف الأشخاص المناسبين.</span>
+              منصة <span className="text-primary">FLEX JOBS</span> للعمل المرن
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
-              فلكس جوب يربط العمال بالشركات التي تبحث عن مساعدة مرنة ومؤقتة
-              وبدوام جزئي. قدّم في ثوانٍ، وأدر فريقك بسهولة.
+              نسد الفجوة في سوق الوظائف الجزئية واليومية في المملكة العربية السعودية، تماشياً مع رؤية 2030. نربط الباحثين عن دخل مرن بالمنشآت التي تحتاج لموظفين مؤقتين في بيئة منظمة وشفافة.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/auth/sign-up?role=worker">
                 <Button size="lg" className="gap-2 px-8">
-                  ابحث عن عمل <ArrowLeft className="h-4 w-4" />
+                  ابحث عن عمل مرن <ArrowLeft className="h-4 w-4" />
                 </Button>
               </Link>
               <Link href="/auth/sign-up?role=company">
                 <Button size="lg" variant="outline" className="gap-2 px-8">
-                  وظّف عمالاً <Users className="h-4 w-4" />
+                  وظّف بنظام الساعات <Users className="h-4 w-4" />
                 </Button>
               </Link>
             </div>
@@ -80,38 +81,28 @@ export default async function LandingPage() {
               لماذا تختار فلكس جوب؟
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground text-pretty">
-              سوق عمل حديث مبني لطريقة عمل الناس اليوم.
+              نحل مشكلة الحاجة للكوادر المؤقتة في قطاعات التجزئة، الفعاليات، والخدمات اللوجستية.
             </p>
             <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               <FeatureCard
                 icon={<Clock className="h-6 w-6" />}
-                title="تقديم سريع"
-                description="قدّم على الوظائف في ثوانٍ. بدون نماذج طويلة أو تعقيد. فقط اعثر على عمل يناسب جدولك."
-              />
-              <FeatureCard
-                icon={<MapPin className="h-6 w-6" />}
-                title="فرص محلية"
-                description="اعثر على وظائف قريبة منك. فلتر حسب المدينة والموقع لاكتشاف عمل مناسب."
+                title="كفاءة عالية"
+                description="تقليل زمن التوظيف وتلبية الاحتياجات التشغيلية الطارئة للمنشآت الصغيرة والمتوسطة."
               />
               <FeatureCard
                 icon={<Shield className="h-6 w-6" />}
-                title="ملفات موثقة"
-                description="كل عامل وشركة يمرّ بعملية توثيق لضمان سوق عمل موثوق."
-              />
-              <FeatureCard
-                icon={<Star className="h-6 w-6" />}
-                title="التقييمات والمراجعات"
-                description="ابنِ سمعتك من خلال تقييمات صادقة من العمال وأصحاب العمل."
-              />
-              <FeatureCard
-                icon={<Briefcase className="h-6 w-6" />}
-                title="لوحة تحكم الشركة"
-                description="انشر وظائف، راجع الطلبات، وأدر فريق عملك من مكان واحد."
+                title="بيئة منظمة"
+                description="بيئة عمل شفافة تضمن حقوق جميع الأطراف من خلال آليات تقييم واضحة."
               />
               <FeatureCard
                 icon={<Users className="h-6 w-6" />}
-                title="لوحة تحكم العامل"
-                description="تابع طلباتك، أدر ملفك الشخصي، واعثر على فرص جديدة."
+                title="تمكين الشباب"
+                description="دعم الاستقلال المالي للشباب السعودي وبناء خبراتهم العملية عبر فرص عمل مرنة."
+              />
+              <FeatureCard
+                icon={<Star className="h-6 w-6" />}
+                title="عدالة وشفافية"
+                description="تكافؤ الفرص للجميع مع وضوح الأجور وآليات التوثيق للمنشآت والعمال."
               />
             </div>
           </div>
@@ -121,10 +112,10 @@ export default async function LandingPage() {
         <section className="py-20">
           <div className="mx-auto max-w-3xl px-4 text-center">
             <h2 className="text-3xl font-bold text-foreground text-balance">
-              مستعد للبدء؟
+              مستعد للمشاركة في التحول الرقمي لسوق العمل؟
             </h2>
             <p className="mt-4 text-muted-foreground text-pretty">
-              انضم إلى فلكس جوب اليوم وابدأ التواصل مع الفرص.
+              انضم إلى منصة فلكس جوب وساهم في تعزيز نمط التوظيف المرن في المملكة.
             </p>
             <div className="mt-8">
               <Link href="/auth/sign-up">
@@ -137,8 +128,24 @@ export default async function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t py-8">
-        <div className="mx-auto max-w-7xl px-4 text-center text-sm text-muted-foreground">
+      <footer className="border-t py-12">
+        <div className="mx-auto max-w-7xl px-4 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="text-right">
+            <h3 className="font-bold text-lg mb-4">فلكس جوب</h3>
+            <p className="text-sm text-muted-foreground">
+              مرجعك الأول للوظائف المرنة في المملكة العربية السعودية.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-bold text-lg mb-4 text-right">روابط سريعة</h3>
+            <ul className="space-y-2 text-right text-sm">
+              <li><Link href="/about" className="hover:text-primary transition-colors">عن المنصة</Link></li>
+              <li><Link href="/auth/login" className="hover:text-primary transition-colors">تسجيل الدخول</Link></li>
+              <li><Link href="/auth/sign-up" className="hover:text-primary transition-colors">ابدأ الآن</Link></li>
+            </ul>
+          </div>
+        </div>
+        <div className="mx-auto max-w-7xl px-4 mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
           {'فلكس جوب \u00A9'} {new Date().getFullYear()}. جميع الحقوق محفوظة.
         </div>
       </footer>
