@@ -3,6 +3,7 @@ import { MapPin, Calendar, DollarSign, Users, Building2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { format } from "date-fns"
+import { JOB_STATUS_LABELS } from "@/lib/constants"
 
 interface Job {
   id: string
@@ -21,12 +22,6 @@ interface Job {
     logo_url: string | null
     profile_id: string
   } | null
-}
-
-const statusLabels: Record<string, string> = {
-  open: "مفتوحة",
-  closed: "مغلقة",
-  filled: "مكتملة",
 }
 
 export function JobCard({ job }: { job: Job }) {
@@ -50,7 +45,7 @@ export function JobCard({ job }: { job: Job }) {
               variant={job.status === "open" ? "default" : "secondary"}
               className="shrink-0"
             >
-              {statusLabels[job.status] || job.status}
+              {JOB_STATUS_LABELS[job.status] || job.status}
             </Badge>
           </div>
         </CardHeader>

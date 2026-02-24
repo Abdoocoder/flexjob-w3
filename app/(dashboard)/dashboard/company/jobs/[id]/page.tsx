@@ -6,12 +6,7 @@ import { ArrowRight, MapPin, DollarSign, Calendar, Users } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 import { ApplicationActions } from "@/components/application-actions"
-
-const statusLabels: Record<string, string> = {
-  open: "مفتوحة",
-  closed: "مغلقة",
-  filled: "مكتملة",
-}
+import { JOB_STATUS_LABELS, APPLICATION_STATUS_LABELS } from "@/lib/constants"
 
 export default async function CompanyJobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -19,6 +14,7 @@ export default async function CompanyJobDetailPage({ params }: { params: Promise
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect("/auth/login")
+  if (user.user_metadata?.role !== "company") redirect("/dashboard/worker")
 
   const { data: company } = await supabase
     .from("companies")
@@ -54,7 +50,7 @@ export default async function CompanyJobDetailPage({ params }: { params: Promise
           <div className="flex items-start justify-between gap-4">
             <CardTitle className="text-xl">{job.title}</CardTitle>
             <Badge variant={job.status === "open" ? "default" : "secondary"}>
-              {statusLabels[job.status] || job.status}
+              {JOB_STATUS_LABELS[job.status] || job.status}
             </Badge>
           </div>
         </CardHeader>

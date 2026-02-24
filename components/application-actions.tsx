@@ -7,12 +7,7 @@ import { Loader2, Check, X } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-
-const statusLabels: Record<string, string> = {
-  pending: "قيد الانتظار",
-  accepted: "مقبول",
-  rejected: "مرفوض",
-}
+import { APPLICATION_STATUS_LABELS } from "@/lib/constants"
 
 export function ApplicationActions({
   applicationId,
@@ -51,7 +46,7 @@ export function ApplicationActions({
       <Badge
         variant={status === "accepted" ? "default" : "destructive"}
       >
-        {statusLabels[status] || status}
+        {APPLICATION_STATUS_LABELS[status] || status}
       </Badge>
     )
   }

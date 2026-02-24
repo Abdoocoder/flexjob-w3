@@ -4,8 +4,11 @@ import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
-const _arabicSans = IBM_Plex_Sans_Arabic({ subsets: ["arabic", "latin"], weight: ["300", "400", "500", "600", "700"] });
-const _mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"] });
+const arabicSans = IBM_Plex_Sans_Arabic({
+  subsets: ["arabic", "latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: '--font-sans',
+});
 
 export const metadata: Metadata = {
   title: 'فلكس جوب - سوق العمل المرن',
@@ -22,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ar" dir="rtl">
-      <body className="font-sans antialiased">
+    <html lang="ar" dir="rtl" className={arabicSans.variable}>
+      <body className={`${arabicSans.className} antialiased`}>
         {children}
         <Toaster position="top-center" />
         <Analytics />

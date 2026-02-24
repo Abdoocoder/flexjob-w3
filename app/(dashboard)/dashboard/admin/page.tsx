@@ -6,31 +6,15 @@ import { Users, Briefcase, Building2, FileText, Star, Shield } from "lucide-reac
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { format } from "date-fns"
 import { VerifyButton } from "@/components/verify-button"
-
-const roleLabels: Record<string, string> = {
-  worker: "عامل",
-  company: "شركة",
-  admin: "مدير",
-}
-
-const appStatusLabels: Record<string, string> = {
-  pending: "قيد الانتظار",
-  accepted: "مقبول",
-  rejected: "مرفوض",
-}
-
-const jobStatusLabels: Record<string, string> = {
-  open: "مفتوحة",
-  closed: "مغلقة",
-  filled: "مكتملة",
-}
+import { StatCard } from "@/components/stat-card"
+import { JOB_STATUS_LABELS, APPLICATION_STATUS_LABELS, ROLE_LABELS } from "@/lib/constants"
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect("/auth/login")
-  if (user.user_metadata?.role !== "admin") redirect("/")
+  if (user.user_metadata?.role !== "admin") redirect("/dashboard/worker")
 
   const [
     { data: profiles },
@@ -94,7 +78,7 @@ export default async function AdminDashboard() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-foreground">{p.full_name || "بدون اسم"}</p>
-                          <Badge variant="outline">{roleLabels[p.role] || p.role}</Badge>
+                          <Badge variant="outline">{ROLE_LABELS[p.role] || p.role}</Badge>
                           {p.is_verified && (
                             <Badge variant="default" className="gap-1">
                               <Shield className="h-3 w-3" /> موثّق
@@ -169,7 +153,7 @@ export default async function AdminDashboard() {
                         <div className="flex items-center gap-2">
                           <p className="font-medium text-foreground">{j.title}</p>
                           <Badge variant={j.status === "open" ? "default" : "secondary"}>
-                            {jobStatusLabels[j.status] || j.status}
+                            {JOB_STATUS_LABELS[j.status] || j.status}
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
@@ -216,7 +200,7 @@ export default async function AdminDashboard() {
                           a.status === "accepted" ? "default" : a.status === "rejected" ? "destructive" : "outline"
                         }
                       >
-                        {appStatusLabels[a.status] || a.status}
+                        {APPLICATION_STATUS_LABELS[a.status] || a.status}
                       </Badge>
                     </div>
                   ))}
@@ -230,26 +214,3 @@ export default async function AdminDashboard() {
   )
 }
 
-function StatCard({
-  label,
-  value,
-  icon,
-}: {
-  label: string
-  value: number
-  icon: React.ReactNode
-}) {
-  return (
-    <Card>
-      <CardContent className="flex items-center gap-4 p-5">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-muted">
-          {icon}
-        </div>
-        <div>
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="text-2xl font-bold text-foreground">{value}</p>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}

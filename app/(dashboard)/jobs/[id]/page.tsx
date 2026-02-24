@@ -7,12 +7,7 @@ import { format } from "date-fns"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ApplyButton } from "@/components/apply-button"
-
-const statusLabels: Record<string, string> = {
-  open: "مفتوحة",
-  closed: "مغلقة",
-  filled: "مكتملة",
-}
+import { JOB_STATUS_LABELS } from "@/lib/constants"
 
 export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -63,7 +58,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
               variant={job.status === "open" ? "default" : "secondary"}
               className="shrink-0 text-sm"
             >
-              {statusLabels[job.status] || job.status}
+              {JOB_STATUS_LABELS[job.status] || job.status}
             </Badge>
           </div>
         </CardHeader>

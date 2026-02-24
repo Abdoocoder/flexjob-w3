@@ -2,22 +2,22 @@ import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Briefcase, Clock, CheckCircle2, XCircle, Star } from "lucide-react"
+import { Briefcase, Clock, CheckCircle2, Star } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
-
-const statusLabels: Record<string, string> = {
-  pending: "قيد الانتظار",
-  accepted: "مقبول",
-  rejected: "مرفوض",
-}
+import { StatCard } from "@/components/stat-card"
+import { APPLICATION_STATUS_LABELS } from "@/lib/constants"
 
 export default async function WorkerDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect("/auth/login")
-  if (user.user_metadata?.role !== "worker") redirect("/dashboard/company")
+
+  const role = user.user_metadata?.role
+  if (role === "company") redirect("/dashboard/company")
+  if (role === "admin") redirect("/dashboard/admin")
+  if (role !== "worker") redirect("/dashboard/worker") // Fallback / current
 
   const { data: applications } = await supabase
     .from("applications")
@@ -54,17 +54,17 @@ export default async function WorkerDashboard() {
         <StatCard
           label="قيد الانتظار"
           value={pending}
-          icon={<Clock className="h-5 w-5 text-accent-foreground" />}
+          icon={<Clock className="h-5 w-5 text-orange-500" />}
         />
         <StatCard
           label="مقبولة"
           value={accepted}
-          icon={<CheckCircle2 className="h-5 w-5 text-success" />}
+          icon={<CheckCircle2 className="h-5 w-5 text-green-500" />}
         />
         <StatCard
           label="التقييم"
           value={profile?.rating ? Number(profile.rating).toFixed(1) : "لا يوجد"}
-          icon={<Star className="h-5 w-5 text-accent-foreground" />}
+          icon={<Star className="h-5 w-5 text-yellow-500" />}
           subtitle={profile?.ratings_count ? `${profile.ratings_count} تقييم` : undefined}
         />
       </div>
@@ -112,33 +112,6 @@ export default async function WorkerDashboard() {
   )
 }
 
-function StatCard({
-  label,
-  value,
-  icon,
-  subtitle,
-}: {
-  label: string
-  value: number | string
-  icon: React.ReactNode
-  subtitle?: string
-}) {
-  return (
-    <Card>
-      <CardContent className="flex items-center gap-4 p-5">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-muted">
-          {icon}
-        </div>
-        <div>
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="text-2xl font-bold text-foreground">{value}</p>
-          {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
 function StatusBadge({ status }: { status: string }) {
   const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
     pending: "outline",
@@ -147,7 +120,7 @@ function StatusBadge({ status }: { status: string }) {
   }
   return (
     <Badge variant={variants[status] || "secondary"}>
-      {statusLabels[status] || status}
+      {APPLICATION_STATUS_LABELS[status] || status}
     </Badge>
   )
 }

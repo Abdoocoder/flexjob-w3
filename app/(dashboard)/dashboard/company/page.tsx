@@ -6,12 +6,8 @@ import { Briefcase, Users, Clock, Plus, Star } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { format } from "date-fns"
-
-const statusLabels: Record<string, string> = {
-  open: "مفتوحة",
-  closed: "مغلقة",
-  filled: "مكتملة",
-}
+import { StatCard } from "@/components/stat-card"
+import { JOB_STATUS_LABELS } from "@/lib/constants"
 
 export default async function CompanyDashboard() {
   const supabase = await createClient()
@@ -113,7 +109,7 @@ export default async function CompanyDashboard() {
                         <Badge
                           variant={job.status === "open" ? "default" : "secondary"}
                         >
-                          {statusLabels[job.status] || job.status}
+                          {JOB_STATUS_LABELS[job.status] || job.status}
                         </Badge>
                       </div>
                       <p className="mt-1 text-sm text-muted-foreground">
@@ -139,26 +135,3 @@ export default async function CompanyDashboard() {
   )
 }
 
-function StatCard({
-  label,
-  value,
-  icon,
-}: {
-  label: string
-  value: number
-  icon: React.ReactNode
-}) {
-  return (
-    <Card>
-      <CardContent className="flex items-center gap-4 p-5">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-muted">
-          {icon}
-        </div>
-        <div>
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="text-2xl font-bold text-foreground">{value}</p>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
