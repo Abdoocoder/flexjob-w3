@@ -1,236 +1,163 @@
-# FlexJob - سوق العمل المرن
+# FlexJob - سوق العمل المرن 🚀
 
-FlexJob is a full-stack job marketplace platform that connects **workers** with **companies** for flexible and temporary work opportunities. Built with Next.js 16, Supabase, and Tailwind CSS, the application supports Arabic (RTL) out of the box and provides role-based dashboards for workers, companies, and administrators.
+![FlexJob Banner](https://via.placeholder.com/1200x400?text=FlexJob+-+Job+Marketplace)
 
----
+## 📋 مقدمة عن المشروع
+يعتبر **FlexJob** منصة متكاملة وسوق عمل مرن يهدف إلى سد الفجوة بين الكوادر العمالية والشركات التي تبحث عن عمالة مؤقتة أو مستقلة. تم تصميم المشروع ليكون ركيزة أساسية في التحول الرقمي لسوق العمل، مع التركيز بشكل خاص على السوق العربي من خلال واجهة مستخدم تدعم اللغة العربية بالكامل (RTL).
 
-## Table of Contents
-
-- [Introduction](#introduction)
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Database Schema](#database-schema)
-- [Installation](#installation)
-- [Environment Variables](#environment-variables)
-- [Database Setup](#database-setup)
-- [Usage](#usage)
-- [User Roles](#user-roles)
-- [License](#license)
-- [Contact](#contact)
+### 💡 أهمية المشروع وسبب الإنشاء
+في ظل التوجه العالمي نحو "العمل المرن" (Gig Economy)، برزت الحاجة إلى منصة تضمن الشفافية والسهولة في تنظيم التعاقدات القصيرة. جاء **FlexJob** لحل مشكلات البحث التقليدي، وتوفير بيئة آمنة تضمن حقوق الطرفين من خلال نظام تقييم متطور وتحقق من الهويات.
 
 ---
 
-## Introduction
+## 🎯 أهداف المشروع
 
-FlexJob was designed to make it easy for businesses to find reliable temporary workers and for workers to discover flexible job opportunities. The platform handles the full lifecycle of a job posting, from creation and application to acceptance and completion, along with a rating system for trust and accountability.
+### الأهداف الرئيسية:
+*   **تسهيل الوصول:** ربط العمال بالشركات بضغطة زر واحدة.
+*   **تنظيم العمل المرن:** إدارة دورة حياة الوظيفة بالكامل من النشر وحتى الإتمام.
+*   **تعزيز الثقة:** بناء نظام تقييم متبادل يعزز من جودة العمل والالتزام.
 
-The entire interface is in Arabic with full right-to-left (RTL) support, making it ideal for the Saudi Arabian and broader Arabic-speaking markets.
-
----
-
-## Key Features
-
-- **Role-Based Authentication** -- Users sign up as either a Worker or a Company, each with their own tailored dashboard and experience.
-- **Job Listings** -- Browse, search, and filter open job opportunities with details like city, salary, dates, and number of workers needed.
-- **Application System** -- Workers can apply to jobs with a single click. Companies can accept or reject applications from their dashboard.
-- **Company Dashboard** -- Post new jobs, manage existing listings, and review incoming applications.
-- **Worker Dashboard** -- Track submitted applications, view their statuses, and monitor personal ratings.
-- **Admin Panel** -- A dedicated dashboard for platform administrators to oversee all users, companies, jobs, and applications, with the ability to verify user profiles.
-- **Profile Management** -- Users can update their personal information, including name, phone, and city.
-- **Arabic (RTL) Interface** -- Full Arabic language support with right-to-left layout and IBM Plex Sans Arabic font.
-- **Robust Security** -- Critical security measures including dual-layer RLS policies and database triggers to prevent role escalation.
-- **Responsive Design** -- Works on desktop, tablet, and mobile devices.
+### الأهداف الثانوية:
+*   تحسين تجربة المستخدم من خلال واجهة حديثة وسريعة باستخدام **Next.js**.
+*   ضمان أمن البيانات من خلال سياسات **Supabase RLS** المتقدمة.
+*   توفير أدوات إدارية قوية لمراقبة وضمان جودة العمليات داخل المنصة.
 
 ---
 
-## Tech Stack
+## 🛠️ وظائف النظام
 
-| Technology | Purpose |
-|---|---|
-| **Next.js 16** | React framework (App Router) |
-| **React 19** | UI library |
-| **Supabase** | Authentication, PostgreSQL database, and RLS |
-| **Tailwind CSS 4** | Utility-first styling |
-| **shadcn/ui** | Reusable UI component library |
-| **SWR** | Client-side data fetching and caching |
-| **Lucide React** | Icon library |
-| **TypeScript** | Type safety |
+| الوظيفة | الوصف | الفئة المستهدفة |
+|---|---|---|
+| **إدارة الأدوار** | نظام تسجيل ذكي يوزع الصلاحيات بناءً على نوع الحساب (عامل، شركة، مدير). | الجميع |
+| **سوق الوظائف** | لوحة تصفح متقدمة مع فلاتر تصفية حسب المدينة، الراتب، والتاريخ. | العمال |
+| **إدارة الطلبات** | نظام لتتبع حالة الطلبات (قيد الانتظار، مقبول، مرفوض). | العمال والشركات |
+| **لوحة تحكم الشركات** | إنشاء وظائف جديدة، مراجعة السير الذاتية، وإدارة المتقدمين. | الشركات |
+| **نظام التحقق** | ميزة للمشرفين لتوثيق الحسابات (Verified) لزيادة الموثوقية. | المشرفون |
 
 ---
 
-## Project Structure
+## ✨ المميزات (الجديدة والقديمة)
 
-```
-flexjob/
-├── app/
-│   ├── layout.tsx                          # Root layout (Arabic, RTL)
-│   ├── page.tsx                            # Landing page
-│   ├── auth/
-│   │   ├── login/page.tsx                  # Login page
-│   │   ├── sign-up/page.tsx                # Sign-up with role selection
-│   │   ├── sign-up-success/page.tsx        # Email confirmation prompt
-│   │   ├── error/page.tsx                  # Auth error page
-│   │   └── callback/route.ts              # OAuth/email callback handler
-│   └── (dashboard)/
-│       ├── layout.tsx                      # Shared dashboard layout with navbar
-│       ├── jobs/
-│       │   ├── page.tsx                    # Job listings (browse all jobs)
-│       │   └── [id]/page.tsx              # Job detail page
-│       ├── profile/page.tsx               # User profile management
-│       └── dashboard/
-│           ├── worker/page.tsx            # Worker dashboard
-│           ├── company/
-│           │   ├── page.tsx               # Company dashboard
-│           │   ├── post-job/page.tsx       # Post a new job form
-│           │   └── jobs/[id]/page.tsx     # Manage applications for a job
-│           └── admin/page.tsx             # Admin panel
-├── components/
-│   ├── navbar.tsx                          # Responsive navigation bar
-│   ├── job-card.tsx                        # Job listing card component
-│   ├── apply-button.tsx                    # Apply-to-job button
-│   ├── application-actions.tsx             # Accept/reject application buttons
-│   └── verify-button.tsx                   # Admin verify/unverify toggle
-├── lib/
-│   └── supabase/
-│       ├── client.ts                       # Browser-side Supabase client
-│       ├── server.ts                       # Server-side Supabase client
-│       └── middleware.ts                   # Supabase session refresh logic
-├── middleware.ts                            # Root middleware for auth
-└── scripts/
-    ├── 001_create_tables.sql              # Core database schema
-    ├── 002_profile_trigger.sql            # Auto-create profile on signup
-    └── 003_admin_policies.sql             # Admin-level RLS policies
-```
+### الميزات الأساسية (القديمة):
+*   نظام تسجيل دخول وآمن عبر البريد الإلكتروني.
+*   إنشاء بروفايل أساسي للعامل والشركة.
+*   نشر الوظائف وتلقي الطلبات البسيطة.
+
+### التحسينات والميزات المتقدمة (الجديدة):
+*   **دعم RTL كامل:** واجهة احترافية تدعم اللغة العربية بشكل طبيعي وسلس.
+*   **لوحة تحكم المشرف (Admin Dashboard):** واجهة مركزية لإدارة المستخدمين، الوظائف، والطلبات وحل النزاعات.
+*   **أمن البيانات المزدوج:** تطبيق سياسات RLS على مستوى قاعدة البيانات لمنع أي تلاعب بالبيانات.
+*   **نظام التنبيهات:** إشعارات فورية لتغييرات حالة الطلبات.
+*   **مؤشر الثقة:** نظام تقييم بالنجوم يؤثر على ترتيب العمال المتميزين والشركات الموثوقة.
 
 ---
 
-## Database Schema
+## 💻 المتطلبات التشغيلية
 
-The application uses five main tables:
+### المتطلبات البرمجية (Software):
+*   **Node.js:** الإصدار 18.x أو أحدث.
+*   **مدير حزم:** NPM أو PNPM (يفضل PNPM).
+*   **قاعدة بيانات:** حساب على **Supabase**.
+*   **المتصفحات:** الإصدارات الحديثة من Chrome, Firefox, Edge, Safari.
 
-| Table | Description |
-|---|---|
-| **profiles** | User profiles linked to Supabase Auth. Stores role (worker/company/admin), name, phone, city, rating, and verification status. |
-| **companies** | Company details linked to a profile. Stores company name, CR number, description, and logo. |
-| **jobs** | Job postings created by companies. Includes title, description, city, dates, salary, workers needed, and status. |
-| **applications** | Tracks worker applications to jobs. Stores status (pending, accepted, rejected). |
-| **ratings** | Star ratings (1-5) between users after job completion. |
-
-All tables have Row Level Security (RLS) enabled, and a database trigger automatically creates a profile row (and a company row if applicable) whenever a new user signs up.
+### المتطلبات العتادية (Hardware):
+*   **ذاكرة عشوائية (RAM):** 4 جيجابايت كحد أدنى للتطوير.
+*   **مساحة تخزين:** 500 ميجابايت للملفات الأساسية والتبعيات.
 
 ---
 
-## Installation
+## 🚀 إرشادات التثبيت والإعداد
 
-1. **Clone the repository:**
+1.  **تحميل المشروع:**
+    ```bash
+    git clone https://github.com/Abdoocoder/flexjob-w3.git
+    cd flexjob-w3
+    ```
 
-   ```bash
-   git clone https://github.com/Abdoocoder/flexjob-w3.git
-   cd flexjob-w3
-   ```
+2.  **تثبيت التبعيات:**
+    ```bash
+    npm install
+    # أو باستخدام pnpm
+    pnpm install
+    ```
 
-2. **Install dependencies:**
+3.  **تكوين متغيرات البيئة:**
+    قم بإنشاء ملف `.env.local` في الجذر وأضف بيانات Supabase الخاصة بك:
+    ```env
+    NEXT_PUBLIC_SUPABASE_URL=رابط_مشروع_سوبابيس
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=مفتاح_الوصول_العام
+    ```
 
-   ```bash
-   pnpm install
-   ```
+4.  **تهيئة قاعدة البيانات:**
+    نفذ السكربتات الموجودة في مجلد `scripts/` داخل محرر SQL في Supabase بالترتيب:
+    *   `001_create_tables.sql`
+    *   `002_profile_trigger.sql`
+    *   `003_admin_policies.sql`
 
-   > If you prefer npm or yarn, use `npm install` or `yarn install` instead.
-
-3. **Set up environment variables** (see the next section).
-
-4. **Run the database migrations** (see [Database Setup](#database-setup)).
-
-5. **Start the development server:**
-
-   ```bash
-   pnpm dev
-   ```
-
-6. **Open your browser** and navigate to `http://localhost:3000`.
-
----
-
-## Environment Variables
-
-Create a `.env.local` file in the root of the project with the following variables:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-You can find these values in your Supabase project dashboard under **Settings > API**.
-
-If deploying on Vercel with the Supabase integration, these variables are set automatically.
+5.  **تشغيل بيئة التطوير:**
+    ```bash
+    npm run dev
+    ```
 
 ---
 
-## Database Setup
+## 📝 أمثلة عملية على الاستخدام
 
-Run the SQL migration scripts in order against your Supabase database. You can execute them through the Supabase SQL Editor or any PostgreSQL client connected to your project:
+### 🟢 سيناريو العامل:
+1.  التسجيل كـ "عامل".
+2.  تصفح الوظائف في مدينة "الرياض".
+3.  النقر على "التقديم على الوظيفة".
+4.  متابعة حالة الطلب من لوحة التحكم الشخصية.
 
-1. **`scripts/001_create_tables.sql`** -- Creates the profiles, companies, jobs, applications, and ratings tables with RLS policies.
-2. **`scripts/002_profile_trigger.sql`** -- Sets up a trigger to auto-create profile and company rows when a user signs up.
-3. **`scripts/003_admin_policies.sql`** -- Adds admin-level RLS policies for managing users and viewing all data.
-
-> If you are using this project via v0.dev, these scripts are executed automatically during setup.
-
----
-
-## Usage
-
-### Signing Up
-
-1. Visit the app and click **"ابدأ الآن"** (Get Started) or navigate to `/auth/sign-up`.
-2. Choose your role: **عامل** (Worker) or **شركة** (Company).
-3. Fill in the required information (email, password, name, phone, city).
-4. Companies must also provide a company name and optional CR number.
-5. After submitting, check your email for a confirmation link.
-
-### For Workers
-
-- **Browse Jobs** -- Visit `/jobs` to see all available job listings.
-- **Apply** -- Click on a job to view details, then click **"التقديم على الوظيفة"** (Apply for Job).
-- **Track Applications** -- Visit your dashboard at `/dashboard/worker` to see the status of all your applications.
-- **Edit Profile** -- Update your personal information at `/profile`.
-
-### For Companies
-
-- **Post Jobs** -- From your dashboard at `/dashboard/company`, click **"نشر وظيفة جديدة"** (Post New Job).
-- **Manage Applications** -- Click on any of your posted jobs to see applicants and accept or reject them.
-- **Edit Profile** -- Update your company information at `/profile`.
-
-### For Admins
-
-- Admins access their panel at `/dashboard/admin`.
-- The admin panel has tabs for **Users**, **Companies**, **Jobs**, and **Applications**.
-- Admins can **verify** or **unverify** user profiles.
-
-> To make a user an admin, manually update their `role` to `'admin'` in the `profiles` table via the Supabase dashboard.
+### 🔵 سيناريو الشركة:
+1.  تسجيل حساب شركة وتوثيق البيانات.
+2.  إضافة وظيفة بـ "5 عمال" بميزانية محددة.
+3.  فرز المتقدمين والنقر على "قبول" لاختيار الأنسب.
 
 ---
 
-## User Roles
+## 🤝 دليل المساهمة (Contribution)
 
-| Role | Capabilities |
-|---|---|
-| **Worker** (`worker`) | Browse jobs, apply to jobs, track applications, manage profile |
-| **Company** (`company`) | Post jobs, manage applications (accept/reject), manage profile and company info |
-| **Admin** (`admin`) | View all platform data, verify/unverify user profiles |
+نحن نرحب بمساهمات المطورين لتطوير هذا المشروع! لضمان جودة الكود، يرجى اتباع الآتي:
 
----
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
+1.  اعمل **Fork** للمستودع.
+2.  قم بإنشاء **Branch** جديد (مثل: `feature/amazing-feature`).
+3.  التزم بقواعد التنسيق الخاصة بـ `Tailwind` و `TypeScript`.
+4.  اكتب وصفاً مفصلاً للتغييرات في الـ **Pull Request**.
+5.  تأكد من نجاح عملية الـ **Build** قبل الرفع.
 
 ---
 
-## Contact
+## 📦 التبعيات المستخدمة (Dependencies)
 
-- **GitHub:** [Abdoocoder](https://github.com/Abdoocoder)
-- **Repository:** [flexjob-w3](https://github.com/Abdoocoder/flexjob-w3)
+| الحزمة | الإصدار | الوظيفة |
+|---|---|---|
+| **Next.js** | 16.1.6 | إطار العمل الأساسي |
+| **React** | 19.2.4 | مكتبة بناء الواجهات |
+| **Supabase** | 2.49.1 | قاعدة البيانات والمصادقة |
+| **Tailwind CSS** | 4.2.0 | التنسيق والتصميم |
+| **Lucide React** | 0.564.0 | الأيقونات |
+| **SWR** | 2.3.3 | جلب البيانات وتحديثها |
+| **Zod** | 3.24.1 | التحقق من صحة البيانات |
 
-For questions, suggestions, or bug reports, please open an issue on the GitHub repository.
+---
+
+## 📜 معلومات الترخيص
+المشروع مرخص بموجب رخصة **MIT**.
+*   **Permissions:** يسمح الاستخدام التجاري، التعديل، التوزيع، والاستخدام الخاص.
+*   **Conditions:** يجب تضمين نسخة من الترخيص وإشعار حقوق النشر الأصلي.
+
+---
+
+## 📅 سجل التحديثات الأخيرة
+*   **2026-02-25:** تحديث شامل لملف README وإضافة دليل المساهمة.
+*   **2026-02-24:** تحسين أمان RLS ومعالجة عمليات إعادة التوجيه للمشرفين.
+*   **2026-02-20:** إطلاق واجهة المشرف (Admin Dashboard) بشكل رسمي.
+
+---
+
+### 📞 تواصل معنا
+*   **GitHub:** [Abdoocoder](https://github.com/Abdoocoder)
+*   **Repository:** [flexjob-w3](https://github.com/Abdoocoder/flexjob-w3)
+
+لأي استفسارات أو بلاغات عن أخطاء، يرجى فتح **Issue** جديد في المستودع.
