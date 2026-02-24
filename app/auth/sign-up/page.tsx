@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
 
-export default function SignUpPage() {
+function SignUpForm() {
   const searchParams = useSearchParams()
   const defaultRole = searchParams.get("role") || "worker"
 
@@ -83,11 +83,10 @@ export default function SignUpPage() {
             <button
               type="button"
               onClick={() => setRole("worker")}
-              className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-colors ${
-                role === "worker"
-                  ? "border-primary bg-primary/5 text-primary"
-                  : "border-border text-muted-foreground hover:border-primary/40"
-              }`}
+              className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-colors ${role === "worker"
+                ? "border-primary bg-primary/5 text-primary"
+                : "border-border text-muted-foreground hover:border-primary/40"
+                }`}
             >
               <User className="h-6 w-6" />
               <span className="text-sm font-medium">عامل</span>
@@ -95,11 +94,10 @@ export default function SignUpPage() {
             <button
               type="button"
               onClick={() => setRole("company")}
-              className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-colors ${
-                role === "company"
-                  ? "border-primary bg-primary/5 text-primary"
-                  : "border-border text-muted-foreground hover:border-primary/40"
-              }`}
+              className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-colors ${role === "company"
+                ? "border-primary bg-primary/5 text-primary"
+                : "border-border text-muted-foreground hover:border-primary/40"
+                }`}
             >
               <Building2 className="h-6 w-6" />
               <span className="text-sm font-medium">شركة</span>
@@ -199,5 +197,13 @@ export default function SignUpPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense>
+      <SignUpForm />
+    </Suspense>
   )
 }
