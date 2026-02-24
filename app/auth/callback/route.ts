@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getUserProfile } from "@/lib/supabase/server"
 import { NextResponse } from "next/server"
 
 export async function GET(request: Request) {
@@ -10,8 +10,8 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      const { data: { user } } = await supabase.auth.getUser()
-      const role = user?.user_metadata?.role || "worker"
+      const { user, profile } = await getUserProfile()
+      const role = profile?.role || user?.user_metadata?.role || "worker"
 
       if (role === "company") return NextResponse.redirect(`${origin}/dashboard/company`)
       if (role === "admin") return NextResponse.redirect(`${origin}/dashboard/admin`)

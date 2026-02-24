@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getUserProfile } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 
@@ -7,15 +7,14 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user, profile } = await getUserProfile()
 
   if (!user) {
     redirect("/auth/login")
   }
 
-  const role = user.user_metadata?.role || "worker"
-  const fullName = user.user_metadata?.full_name || null
+  const role = profile?.role || user.user_metadata?.role || "worker"
+  const fullName = profile?.full_name || user.user_metadata?.full_name || null
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

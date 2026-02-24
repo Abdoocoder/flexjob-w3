@@ -22,7 +22,7 @@ export default function LoginPage() {
     setLoading(true)
 
     const supabase = createClient()
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
       toast.error(error.message)
@@ -30,7 +30,14 @@ export default function LoginPage() {
       return
     }
 
-    const role = data.user?.user_metadata?.role || "worker"
+    // Fetch profile to get the most up-to-date role
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", authData.user.id)
+      .single()
+
+    const role = profile?.role || authData.user?.user_metadata?.role || "worker"
     if (role === "company") {
       router.push("/dashboard/company")
     } else if (role === "admin") {

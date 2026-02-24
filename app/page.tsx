@@ -1,21 +1,15 @@
 import Link from "next/link"
 import Image from "next/image"
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getUserProfile } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { Briefcase, Users, Star, ArrowLeft, Shield, Clock, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-async function getUser() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  return user
-}
-
 export default async function LandingPage() {
-  const user = await getUser()
+  const { user, profile } = await getUserProfile()
 
   if (user) {
-    const role = user.user_metadata?.role || "worker"
+    const role = profile?.role || user.user_metadata?.role || "worker"
     if (role === "company") redirect("/dashboard/company")
     if (role === "admin") redirect("/dashboard/admin")
     redirect("/dashboard/worker")

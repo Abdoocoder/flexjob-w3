@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getUserProfile } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,25 +10,26 @@ import { StatCard } from "@/components/stat-card"
 import { JOB_STATUS_LABELS, APPLICATION_STATUS_LABELS, ROLE_LABELS } from "@/lib/constants"
 
 export default async function AdminDashboard() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user, profile } = await getUserProfile()
 
   if (!user) redirect("/auth/login")
-  if (user.user_metadata?.role !== "admin") redirect("/dashboard/worker")
+  if (profile?.role !== "admin") redirect("/dashboard/worker")
+
+  const supabase = await createClient()
 
   const [
     { data: profiles },
     { data: companies },
     { data: jobs },
     { data: applications },
-  ] = await Promise.all([
+  ]: any = await Promise.all([
     supabase.from("profiles").select("*").order("created_at", { ascending: false }),
     supabase.from("companies").select("*, profiles(full_name)").order("created_at", { ascending: false }),
     supabase.from("jobs").select("*, companies(company_name)").order("created_at", { ascending: false }),
     supabase.from("applications").select("*, profiles:worker_id(full_name), jobs(title)").order("created_at", { ascending: false }),
   ])
 
-  const totalWorkers = profiles?.filter((p) => p.role === "worker").length || 0
+  const totalWorkers = profiles?.filter((p: any) => p.role === "worker").length || 0
   const totalCompanies = companies?.length || 0
   const totalJobs = jobs?.length || 0
   const totalApplications = applications?.length || 0
@@ -73,7 +74,7 @@ export default async function AdminDashboard() {
                 <p className="py-6 text-center text-muted-foreground">لا يوجد مستخدمون بعد</p>
               ) : (
                 <div className="flex flex-col gap-2">
-                  {profiles.map((p) => (
+                  {profiles.map((p: any) => (
                     <div key={p.id} className="flex items-center justify-between rounded-lg border p-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
@@ -116,7 +117,7 @@ export default async function AdminDashboard() {
                 <p className="py-6 text-center text-muted-foreground">لا توجد شركات بعد</p>
               ) : (
                 <div className="flex flex-col gap-2">
-                  {companies.map((c) => (
+                  {companies.map((c: any) => (
                     <div key={c.id} className="flex items-center justify-between rounded-lg border p-3">
                       <div>
                         <p className="font-medium text-foreground">{c.company_name}</p>
@@ -147,7 +148,7 @@ export default async function AdminDashboard() {
                 <p className="py-6 text-center text-muted-foreground">لا توجد وظائف بعد</p>
               ) : (
                 <div className="flex flex-col gap-2">
-                  {jobs.map((j) => (
+                  {jobs.map((j: any) => (
                     <div key={j.id} className="flex items-center justify-between rounded-lg border p-3">
                       <div>
                         <div className="flex items-center gap-2">
@@ -184,7 +185,7 @@ export default async function AdminDashboard() {
                 <p className="py-6 text-center text-muted-foreground">لا توجد طلبات بعد</p>
               ) : (
                 <div className="flex flex-col gap-2">
-                  {applications.map((a) => (
+                  {applications.map((a: any) => (
                     <div key={a.id} className="flex items-center justify-between rounded-lg border p-3">
                       <div>
                         <p className="font-medium text-foreground">
