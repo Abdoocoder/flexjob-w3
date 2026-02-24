@@ -31,9 +31,6 @@ export default async function LandingPage() {
             <span className="text-xl font-bold text-foreground">فلكس جوب</span>
           </Link>
           <nav className="flex items-center gap-3">
-            <Link href="/about">
-              <Button variant="ghost" size="sm">عن المنصة</Button>
-            </Link>
             <Link href="/auth/login">
               <Button variant="outline" size="sm">تسجيل الدخول</Button>
             </Link>
