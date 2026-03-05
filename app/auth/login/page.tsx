@@ -4,28 +4,48 @@ import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Briefcase, Loader2 } from "lucide-react"
+import { AlertCircle, Loader2, Briefcase } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { loginSchema, type LoginInput } from "@/lib/validations"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
   const router = useRouter()
 
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+  })
+
+  async function onSubmit(data: LoginInput) {
     setLoading(true)
+    setError("")
 
     const supabase = createClient()
-    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    })
 
-    if (error) {
-      toast.error(error.message)
+    if (authError) {
+      setError("البريد الإلكتروني أو كلمة المرور غير صحيحة")
+      setLoading(false)
+      return
+    }
+
+    if (!authData.user) {
       setLoading(false)
       return
     }
@@ -61,17 +81,26 @@ export default function LoginPage() {
           <CardDescription>سجّل الدخول إلى حسابك للمتابعة</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="flex flex-col gap-4">
+          {error && (
+            <div className="mb-4 flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4" />
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">البريد الإلكتروني</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                {...register("email")}
+                className={errors.email ? "border-destructive" : ""}
               />
+              {errors.email && (
+                <p className="text-xs text-destructive">{errors.email.message}</p>
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="password">كلمة المرور</Label>
@@ -79,10 +108,12 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 placeholder="كلمة المرور"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+                {...register("password")}
+                className={errors.password ? "border-destructive" : ""}
               />
+              {errors.password && (
+                <p className="text-xs text-destructive">{errors.password.message}</p>
+              )}
             </div>
             <Button type="submit" className="mt-2 w-full" disabled={loading}>
               {loading ? <Loader2 className="ml-2 h-4 w-4 animate-spin" /> : null}

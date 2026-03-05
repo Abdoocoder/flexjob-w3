@@ -26,9 +26,11 @@ CREATE POLICY "Users see own notifications"
   ON notifications FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY "System can insert notifications"
+-- Triggers use SECURITY DEFINER and bypass RLS, so this policy
+-- only governs direct client inserts (restricted to own user_id).
+CREATE POLICY "Users can insert own notifications"
   ON notifications FOR INSERT
-  WITH CHECK (true);
+  WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can update own notifications"
   ON notifications FOR UPDATE

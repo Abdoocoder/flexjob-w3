@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getUserProfile } from "@/lib/supabase/server"
 import { notFound } from "next/navigation"
 import { MapPin, Calendar, DollarSign, Users, Building2, ArrowRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -21,8 +21,8 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
 
   if (!job) notFound()
 
-  const { data: { user } } = await supabase.auth.getUser()
-  const role = user?.user_metadata?.role || "worker"
+  const { user, profile } = await getUserProfile()
+  const role = profile?.role || user?.user_metadata?.role || "worker"
   const isWorker = role === "worker"
 
   let hasApplied = false

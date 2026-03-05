@@ -11,21 +11,26 @@ import { Textarea } from "@/components/ui/textarea"
 import { ArrowRight, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { postJobSchema, type PostJobInput } from "@/lib/validations"
 
 export default function PostJobPage() {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [city, setCity] = useState("")
-  const [location, setLocation] = useState("")
-  const [salary, setSalary] = useState("")
-  const [workersNeeded, setWorkersNeeded] = useState("1")
-  const [startDate, setStartDate] = useState("")
-  const [endDate, setEndDate] = useState("")
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<PostJobInput>({
+    resolver: zodResolver(postJobSchema),
+    defaultValues: {
+      workersNeeded: "1",
+    },
+  })
+
+  async function onSubmit(data: PostJobInput) {
     setLoading(true)
 
     const supabase = createClient()
@@ -51,14 +56,14 @@ export default function PostJobPage() {
 
     const { error } = await supabase.from("jobs").insert({
       company_id: company.id,
-      title,
-      description: description || null,
-      city: city || null,
-      location: location || null,
-      salary: salary ? parseFloat(salary) : null,
-      workers_needed: parseInt(workersNeeded) || 1,
-      start_date: startDate || null,
-      end_date: endDate || null,
+      title: data.title,
+      description: data.description || null,
+      city: data.city || null,
+      location: data.location || null,
+      salary: data.salary ? parseFloat(data.salary) : null,
+      workers_needed: parseInt(data.workersNeeded) || 1,
+      start_date: data.startDate || null,
+      end_date: data.endDate || null,
     })
 
     if (error) {
@@ -84,24 +89,25 @@ export default function PostJobPage() {
           <CardDescription>املأ تفاصيل الوظيفة الجديدة</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="title">المسمى الوظيفي *</Label>
               <Input
                 id="title"
                 placeholder="مثال: مساعد مستودع"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
+                {...register("title")}
+                className={errors.title ? "border-destructive" : ""}
               />
+              {errors.title && (
+                <p className="text-xs text-destructive">{errors.title.message}</p>
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="description">الوصف</Label>
               <Textarea
                 id="description"
                 placeholder="اشرح مسؤوليات ومتطلبات الوظيفة..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                {...register("description")}
                 rows={4}
               />
             </div>
@@ -111,8 +117,7 @@ export default function PostJobPage() {
                 <Input
                   id="city"
                   placeholder="الرياض"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  {...register("city")}
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -120,8 +125,7 @@ export default function PostJobPage() {
                 <Input
                   id="location"
                   placeholder="الموقع المحدد"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  {...register("location")}
                 />
               </div>
             </div>
@@ -132,20 +136,24 @@ export default function PostJobPage() {
                   id="salary"
                   type="number"
                   placeholder="500"
-                  value={salary}
-                  onChange={(e) => setSalary(e.target.value)}
-                  min="0"
+                  {...register("salary")}
+                  className={errors.salary ? "border-destructive" : ""}
                 />
+                {errors.salary && (
+                  <p className="text-xs text-destructive">{errors.salary.message}</p>
+                )}
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="workersNeeded">عدد العمال المطلوبين</Label>
                 <Input
                   id="workersNeeded"
                   type="number"
-                  value={workersNeeded}
-                  onChange={(e) => setWorkersNeeded(e.target.value)}
-                  min="1"
+                  {...register("workersNeeded")}
+                  className={errors.workersNeeded ? "border-destructive" : ""}
                 />
+                {errors.workersNeeded && (
+                  <p className="text-xs text-destructive">{errors.workersNeeded.message}</p>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -154,8 +162,7 @@ export default function PostJobPage() {
                 <Input
                   id="startDate"
                   type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  {...register("startDate")}
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -163,8 +170,7 @@ export default function PostJobPage() {
                 <Input
                   id="endDate"
                   type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
+                  {...register("endDate")}
                 />
               </div>
             </div>

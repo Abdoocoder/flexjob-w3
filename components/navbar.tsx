@@ -7,13 +7,17 @@ import { createClient } from "@/lib/supabase/client"
 import { Briefcase, LogOut, LayoutDashboard, User, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import { NotificationBell } from "./notification-bell"
+import { ROLE_LABELS } from "@/lib/constants"
 
 export function Navbar({
   role,
   fullName,
+  userId,
 }: {
   role: string
   fullName: string | null
+  userId: string
 }) {
   const pathname = usePathname()
   const router = useRouter()
@@ -31,12 +35,6 @@ export function Navbar({
       : role === "admin"
         ? "/dashboard/admin"
         : "/dashboard/worker"
-
-  const roleLabels: Record<string, string> = {
-    worker: "عامل",
-    company: "شركة",
-    admin: "مدير",
-  }
 
   const navLinks = [
     { href: dashboardPath, label: "لوحة التحكم", icon: LayoutDashboard },
@@ -79,10 +77,11 @@ export function Navbar({
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <span className="text-sm text-muted-foreground">
+          <NotificationBell userId={userId} role={role as any} />
+          <span className="text-sm font-medium text-foreground">
             {fullName || "عضو"}{" "}
             <span className="rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
-              {roleLabels[role] || role}
+              {ROLE_LABELS[role] || role}
             </span>
           </span>
           <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
@@ -90,15 +89,17 @@ export function Navbar({
           </Button>
         </div>
 
-        {/* زر القائمة للجوال */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="md:hidden"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </Button>
+        {/* أزرار الإشعارات والقائمة للجوال */}
+        <div className="flex items-center gap-2 md:hidden">
+          <NotificationBell userId={userId} role={role as any} />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+        </div>
       </div>
 
       {/* قائمة الجوال */}

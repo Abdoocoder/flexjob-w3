@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getUserProfile } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -7,14 +7,17 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { format } from "date-fns"
 import { StatCard } from "@/components/stat-card"
-import { JOB_STATUS_LABELS } from "@/lib/constants"
+import { JOB_STATUS_LABELS, ROLE_LABELS } from "@/lib/constants"
+import { StatusBadge } from "@/components/status-badge"
 
 export default async function CompanyDashboard() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user, profile } = await getUserProfile()
 
   if (!user) redirect("/auth/login")
-  if (user.user_metadata?.role !== "company") redirect("/dashboard/worker")
+  const role = profile?.role || user.user_metadata?.role || "worker"
+  if (role !== "company") redirect("/dashboard/worker")
+
+  const supabase = await createClient()
 
   const { data: company } = await supabase
     .from("companies")
@@ -106,11 +109,7 @@ export default async function CompanyDashboard() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-foreground">{job.title}</p>
-                        <Badge
-                          variant={job.status === "open" ? "default" : "secondary"}
-                        >
-                          {JOB_STATUS_LABELS[job.status] || job.status}
-                        </Badge>
+                        <StatusBadge status={job.status} type="job" />
                       </div>
                       <p className="mt-1 text-sm text-muted-foreground">
                         {job.city && `${job.city} - `}

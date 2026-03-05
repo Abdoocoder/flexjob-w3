@@ -8,31 +8,42 @@ import { format } from "date-fns"
 import { VerifyButton } from "@/components/verify-button"
 import { StatCard } from "@/components/stat-card"
 import { JOB_STATUS_LABELS, APPLICATION_STATUS_LABELS, ROLE_LABELS } from "@/lib/constants"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
-export default async function AdminDashboard() {
+export default async function AdminDashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
   const { user, profile } = await getUserProfile()
 
   if (!user) redirect("/auth/login")
-  if (profile?.role !== "admin") redirect("/dashboard/worker")
+  const role = profile?.role || user.user_metadata?.role || "worker"
+  if (role !== "admin") redirect("/dashboard/worker")
+
+  const { page } = await searchParams
+  const currentPage = Number(page) || 1
+  const pageSize = 50
+  const from = (currentPage - 1) * pageSize
+  const to = from + pageSize - 1
 
   const supabase = await createClient()
 
   const [
-    { data: profiles },
-    { data: companies },
-    { data: jobs },
-    { data: applications },
+    { data: profiles, count: profilesCount },
+    { data: companies, count: companiesCount },
+    { data: jobs, count: jobsCount },
+    { data: applications, count: applicationsCount },
   ]: any = await Promise.all([
-    supabase.from("profiles").select("*").order("created_at", { ascending: false }),
-    supabase.from("companies").select("*, profiles(full_name)").order("created_at", { ascending: false }),
-    supabase.from("jobs").select("*, companies(company_name)").order("created_at", { ascending: false }),
-    supabase.from("applications").select("*, profiles:worker_id(full_name), jobs(title)").order("created_at", { ascending: false }),
+    supabase.from("profiles").select("*", { count: "exact" }).order("created_at", { ascending: false }).range(from, to),
+    supabase.from("companies").select("*, profiles(full_name)", { count: "exact" }).order("created_at", { ascending: false }).range(from, to),
+    supabase.from("jobs").select("*, companies(company_name)", { count: "exact" }).order("created_at", { ascending: false }).range(from, to),
+    supabase.from("applications").select("*, profiles:worker_id(full_name), jobs(title)", { count: "exact" }).order("created_at", { ascending: false }).range(from, to),
   ])
 
-  const totalWorkers = profiles?.filter((p: any) => p.role === "worker").length || 0
-  const totalCompanies = companies?.length || 0
-  const totalJobs = jobs?.length || 0
-  const totalApplications = applications?.length || 0
+  const totalWorkers = profiles?.filter((p: any) => p.role === "worker").length || 0 // This is local filter of current page, needs adjustment if wanting global count
+  // For the stats, we should probably use the global counts
 
   return (
     <div>
@@ -42,16 +53,30 @@ export default async function AdminDashboard() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">لوحة الإدارة</h1>
-          <p className="text-sm text-muted-foreground">نظرة عامة وإدارة المنصة</p>
+          <p className="text-sm text-muted-foreground">نظرة عامة وإدارة المنصة (الصفحة {currentPage})</p>
         </div>
       </div>
 
       {/* الإحصائيات */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="العمال" value={totalWorkers} icon={<Users className="h-5 w-5 text-primary" />} />
-        <StatCard label="الشركات" value={totalCompanies} icon={<Building2 className="h-5 w-5 text-primary" />} />
-        <StatCard label="الوظائف" value={totalJobs} icon={<Briefcase className="h-5 w-5 text-primary" />} />
-        <StatCard label="الطلبات" value={totalApplications} icon={<FileText className="h-5 w-5 text-primary" />} />
+        <StatCard label="المستخدمون" value={profilesCount || 0} icon={<Users className="h-5 w-5 text-primary" />} />
+        <StatCard label="الشركات" value={companiesCount || 0} icon={<Building2 className="h-5 w-5 text-primary" />} />
+        <StatCard label="الوظائف" value={jobsCount || 0} icon={<Briefcase className="h-5 w-5 text-primary" />} />
+        <StatCard label="الطلبات" value={applicationsCount || 0} icon={<FileText className="h-5 w-5 text-primary" />} />
+      </div>
+
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex gap-2">
+          {currentPage > 1 && (
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/dashboard/admin?page=${currentPage - 1}`}>السابق</Link>
+            </Button>
+          )}
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/dashboard/admin?page=${currentPage + 1}`}>التالي</Link>
+          </Button>
+        </div>
+        <span className="text-sm text-muted-foreground">عرض {pageSize} عنصر في الصفحة</span>
       </div>
 
       {/* التبويبات */}

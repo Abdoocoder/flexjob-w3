@@ -11,8 +11,33 @@ const arabicSans = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://flexjob.sa'),
   title: 'فلكس جوب - سوق العمل المرن',
   description: 'تواصل مع فرص عمل مرنة. ابحث عن وظائف مؤقتة وبدوام جزئي أو وظّف عمالاً موثوقين لنشاطك التجاري.',
+  keywords: ['عمل مرن', 'وظائف السعودية', 'دوام جزئي', 'عمل حر', 'توظيف'],
+  authors: [{ name: 'FlexJob Team' }],
+  openGraph: {
+    type: 'website',
+    locale: 'ar_SA',
+    url: 'https://flexjob.sa',
+    siteName: 'فلكس جوب',
+    title: 'فلكس جوب - سوق العمل المرن',
+    description: 'تواصل مع فرص عمل مرنة. ابحث عن وظائف مؤقتة وبدوام جزئي أو وظّف عمالاً موثوقين لنشاطك التجاري.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'فلكس جوب',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'فلكس جوب - سوق العمل المرن',
+    description: 'تواصل مع فرص عمل مرنة. ابحث عن وظائف مؤقتة وبدوام جزئي أو وظّف عمالاً موثوقين لنشاطك التجاري.',
+    images: ['/og-image.png'],
+  },
   icons: {
     icon: [
       { url: '/icon-light-32x32.png', sizes: '32x32', type: 'image/png' },

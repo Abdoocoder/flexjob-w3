@@ -6,49 +6,57 @@ import { Suspense, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Briefcase, Loader2, User, Building2 } from "lucide-react"
+import { Briefcase, Loader2, User, Building2, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { signUpSchema, type SignUpInput } from "@/lib/validations"
 
 function SignUpForm() {
   const searchParams = useSearchParams()
   const defaultRole = searchParams.get("role") || "worker"
 
-  const [role, setRole] = useState<"worker" | "company">(defaultRole as "worker" | "company")
-  const [fullName, setFullName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [phone, setPhone] = useState("")
-  const [city, setCity] = useState("")
-  const [companyName, setCompanyName] = useState("")
-  const [crNumber, setCrNumber] = useState("")
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<SignUpInput>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      role: (defaultRole as "worker" | "company") || "worker",
+    },
+  })
+
+  const role = watch("role")
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  async function handleSignUp(e: React.FormEvent) {
-    e.preventDefault()
+  async function onSubmit(data: SignUpInput) {
     setLoading(true)
 
     const supabase = createClient()
 
-    const metadata: Record<string, string> = {
-      role,
-      full_name: fullName,
-      phone,
-      city,
+    const metadata: Record<string, any> = {
+      role: data.role,
+      full_name: data.fullName,
+      phone: data.phone || null,
+      city: data.city || null,
     }
 
-    if (role === "company") {
-      metadata.company_name = companyName
-      metadata.cr_number = crNumber
+    if (data.role === "company") {
+      metadata.company_name = data.companyName
+      metadata.cr_number = data.crNumber || null
     }
 
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: data.email,
+      password: data.password,
       options: {
         emailRedirectTo:
           process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ||
@@ -84,7 +92,7 @@ function SignUpForm() {
           <div className="mb-6 grid grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={() => setRole("worker")}
+              onClick={() => setValue("role", "worker")}
               className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-colors ${role === "worker"
                 ? "border-primary bg-primary/5 text-primary"
                 : "border-border text-muted-foreground hover:border-primary/40"
@@ -95,7 +103,7 @@ function SignUpForm() {
             </button>
             <button
               type="button"
-              onClick={() => setRole("company")}
+              onClick={() => setValue("role", "company")}
               className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-colors ${role === "company"
                 ? "border-primary bg-primary/5 text-primary"
                 : "border-border text-muted-foreground hover:border-primary/40"
@@ -106,16 +114,18 @@ function SignUpForm() {
             </button>
           </div>
 
-          <form onSubmit={handleSignUp} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="fullName">الاسم الكامل</Label>
               <Input
                 id="fullName"
                 placeholder="اسمك الكامل"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
+                {...register("fullName")}
+                className={errors.fullName ? "border-destructive" : ""}
               />
+              {errors.fullName && (
+                <p className="text-xs text-destructive">{errors.fullName.message}</p>
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">البريد الإلكتروني</Label>
@@ -123,10 +133,12 @@ function SignUpForm() {
                 id="email"
                 type="email"
                 placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                {...register("email")}
+                className={errors.email ? "border-destructive" : ""}
               />
+              {errors.email && (
+                <p className="text-xs text-destructive">{errors.email.message}</p>
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="password">كلمة المرور</Label>
@@ -134,11 +146,12 @@ function SignUpForm() {
                 id="password"
                 type="password"
                 placeholder="6 أحرف على الأقل"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
+                {...register("password")}
+                className={errors.password ? "border-destructive" : ""}
               />
+              {errors.password && (
+                <p className="text-xs text-destructive">{errors.password.message}</p>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
@@ -146,18 +159,24 @@ function SignUpForm() {
                 <Input
                   id="phone"
                   placeholder="05XXXXXXXX"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  {...register("phone")}
+                  className={errors.phone ? "border-destructive" : ""}
                 />
+                {errors.phone && (
+                  <p className="text-xs text-destructive">{errors.phone.message}</p>
+                )}
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="city">المدينة</Label>
                 <Input
                   id="city"
                   placeholder="الرياض"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  {...register("city")}
+                  className={errors.city ? "border-destructive" : ""}
                 />
+                {errors.city && (
+                  <p className="text-xs text-destructive">{errors.city.message}</p>
+                )}
               </div>
             </div>
 
@@ -168,19 +187,24 @@ function SignUpForm() {
                   <Input
                     id="companyName"
                     placeholder="اسم شركتك"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    required
+                    {...register("companyName")}
+                    className={errors.companyName ? "border-destructive" : ""}
                   />
+                  {errors.companyName && (
+                    <p className="text-xs text-destructive">{errors.companyName.message}</p>
+                  )}
                 </div>
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="crNumber">رقم السجل التجاري (اختياري)</Label>
                   <Input
                     id="crNumber"
                     placeholder="رقم السجل التجاري"
-                    value={crNumber}
-                    onChange={(e) => setCrNumber(e.target.value)}
+                    {...register("crNumber")}
+                    className={errors.crNumber ? "border-destructive" : ""}
                   />
+                  {errors.crNumber && (
+                    <p className="text-xs text-destructive">{errors.crNumber.message}</p>
+                  )}
                 </div>
               </>
             )}

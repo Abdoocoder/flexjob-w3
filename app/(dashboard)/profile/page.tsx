@@ -8,22 +8,26 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, Star } from "lucide-react"
 import { toast } from "sonner"
-
-const roleLabels: Record<string, string> = {
-  worker: "عامل",
-  company: "شركة",
-  admin: "مدير",
-}
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { profileSchema, type ProfileInput } from "@/lib/validations"
+import { ROLE_LABELS } from "@/lib/constants"
 
 export default function ProfilePage() {
-  const [fullName, setFullName] = useState("")
-  const [phone, setPhone] = useState("")
-  const [city, setCity] = useState("")
   const [role, setRole] = useState("")
   const [rating, setRating] = useState<number | null>(null)
   const [ratingsCount, setRatingsCount] = useState(0)
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ProfileInput>({
+    resolver: zodResolver(profileSchema),
+  })
 
   useEffect(() => {
     async function loadProfile() {
@@ -31,9 +35,6 @@ export default function ProfilePage() {
       const { data: { user } } = await supabase.auth.getUser()
 
       if (user) {
-        setFullName(user.user_metadata?.full_name || "")
-        setPhone(user.user_metadata?.phone || "")
-        setCity(user.user_metadata?.city || "")
         setRole(user.user_metadata?.role || "worker")
 
         const { data: profile } = await supabase
@@ -42,10 +43,15 @@ export default function ProfilePage() {
           .eq("id", user.id)
           .single()
 
+        const initialData = {
+          fullName: profile?.full_name || user.user_metadata?.full_name || "",
+          phone: profile?.phone || user.user_metadata?.phone || "",
+          city: profile?.city || user.user_metadata?.city || "",
+        }
+
+        reset(initialData)
+
         if (profile) {
-          setFullName(profile.full_name || fullName)
-          setPhone(profile.phone || phone)
-          setCity(profile.city || city)
           setRating(profile.rating ? Number(profile.rating) : null)
           setRatingsCount(profile.ratings_count || 0)
         }
@@ -53,11 +59,10 @@ export default function ProfilePage() {
       setFetching(false)
     }
     loadProfile()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault()
+  async function onSave(data: ProfileInput) {
     setLoading(true)
 
     const supabase = createClient()
@@ -71,7 +76,11 @@ export default function ProfilePage() {
 
     const { error: profileError } = await supabase
       .from("profiles")
-      .update({ full_name: fullName, phone, city })
+      .update({
+        full_name: data.fullName,
+        phone: data.phone,
+        city: data.city,
+      })
       .eq("id", user.id)
 
     if (profileError) {
@@ -81,7 +90,11 @@ export default function ProfilePage() {
     }
 
     await supabase.auth.updateUser({
-      data: { full_name: fullName, phone, city },
+      data: {
+        full_name: data.fullName,
+        phone: data.phone,
+        city: data.city,
+      },
     })
 
     toast.success("تم تحديث الملف الشخصي بنجاح")
@@ -125,27 +138,29 @@ export default function ProfilePage() {
           <CardTitle>المعلومات الشخصية</CardTitle>
           <CardDescription>
             نوع الحساب:{" "}
-            <span className="font-medium text-primary">{roleLabels[role] || role}</span>
+            <span className="font-medium text-primary">{ROLE_LABELS[role] || role}</span>
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSave} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSave)} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="fullName">الاسم الكامل</Label>
               <Input
                 id="fullName"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                {...register("fullName")}
+                className={errors.fullName ? "border-destructive" : ""}
                 placeholder="اسمك الكامل"
               />
+              {errors.fullName && (
+                <p className="text-xs text-destructive">{errors.fullName.message}</p>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="phone">رقم الجوال</Label>
                 <Input
                   id="phone"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  {...register("phone")}
                   placeholder="05XXXXXXXX"
                 />
               </div>
@@ -153,8 +168,7 @@ export default function ProfilePage() {
                 <Label htmlFor="city">المدينة</Label>
                 <Input
                   id="city"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  {...register("city")}
                   placeholder="الرياض"
                 />
               </div>
